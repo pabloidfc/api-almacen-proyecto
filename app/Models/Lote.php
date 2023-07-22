@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Lote extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+
+    protected $table = "lote";
+    public $timestamps = false;
+
+    public function Productos() {
+        return $this -> hasMany(Producto::class);
+    } 
 }
