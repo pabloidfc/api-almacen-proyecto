@@ -11,5 +11,4 @@ class Camion extends Model
     use SoftDeletes;
 
     protected $table = "camion";
-    public $timestamps = false;
 }

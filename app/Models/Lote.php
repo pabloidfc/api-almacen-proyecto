@@ -11,7 +11,6 @@ class Lote extends Model
     use SoftDeletes;
 
     protected $table = "lote";
-    public $timestamps = false;
 
     public function Productos() {
         return $this -> hasMany(Producto::class);

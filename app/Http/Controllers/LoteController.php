@@ -7,17 +7,17 @@ use App\Models\Lote;
 
 class LoteController extends Controller
 {
-    public function Listar(Request $request) {
+    public function Listar(Request $req) {
         return Lote::all();
     }
 
-    public function ListarUno(Request $request, $idLote) {
+    public function ListarUno(Request $req, $idLote) {
         return Lote::findOrFail($idLote);
     }
 
-    public function Modificar(Request $request, $idLote) {
+    public function Modificar(Request $req, $idLote) {
         $lote = Producto::find($idLote);
-        $lote -> estado = $request -> post("estado");
+        $lote -> estado = $req -> post("estado");
         $lote -> save();
         return $lote;
     }

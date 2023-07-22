@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\LoteController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,3 +26,7 @@ Route::get("/producto/{id}", [ProductoController::class, "ListarUno"]);
 Route::post("/producto", [ProductoController::class, "Crear"]);
 Route::put("/producto/{id}", [ProductoController::class, "Modificar"]);
 Route::delete("/producto/{id}", [ProductoController::class, "Eliminar"]);
+
+Route::get("/lote", [LoteController::class, "Listar"]);
+Route::get("/lote/{id}", [LoteController::class, "ListarUno"]);
+Route::put("/lote/{id}", [LoteController::class, "Modificar"]);
