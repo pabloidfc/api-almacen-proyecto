@@ -17,3 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get("/producto", [ProductoController::class, "Listar"]);
+Route::get("/producto/{id}", [ProductoController::class, "ListarUno"]);
+Route::post("/producto", [ProductoController::class, "Crear"]);
+Route::put("/producto/{id}", [ProductoController::class, "Modificar"]);
+Route::delete("/producto/{id}", [ProductoController::class, "Eliminar"]);
