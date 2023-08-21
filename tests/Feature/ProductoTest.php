@@ -32,14 +32,19 @@ class ProductoTest extends TestCase
             "deleted_at",
         ];
         
-        $res = $this -> get('/api/producto/500000');
+        $res = $this -> get('/api/producto/500001');
         $res -> assertStatus(200);
         $res -> assertJsonCount(8);
         $res -> assertJsonStructure($estructura);
     }
 
     public function test_ListarUnoQueNoExista() {
-        $res = $this -> get('/api/producto/500001');
+        $res = $this -> get('/api/producto/500000');
         $res -> assertStatus(404);
+    }
+
+    public function test_EliminarUnoQueNoExista() {
+        $res = $this -> delete('/api/producto/500000');
+        $res -> assertStatus(500);
     }
 }
