@@ -16,4 +16,8 @@ class Producto extends Model
     public function Lote() {
         return $this -> belongsTo(Lote::class);
     }
+
+    public function Almacen() {
+        return $this -> belongsTo(Almacen::class);
+    }
 }
