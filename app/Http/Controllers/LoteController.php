@@ -15,15 +15,18 @@ class LoteController extends Controller
         return Lote::findOrFail($idLote);
     }
 
-    public function Modificar(Request $req, $idLote) { // TODO Lote tiene que tener estado
-        $lote = Lote::find($idLote); // TODO que pasa si no se encuentra el Lote
-        $lote -> estado = $req -> post("estado");
+    public function Modificar(Request $req, $idLote) {
+        $lote = Lote::find($idLote);
+
+        if ($req -> has("peso"))            $lote -> peso            = $req -> post("peso");
+        if ($req -> has("estado"))          $lote -> estado          = $req -> post("estado");
+        if ($req -> has("almacen_destino")) $lote -> almacen_destino = $req -> post("almacen_destino");
+
         $lote -> save();
         
         return $lote;
     }
 
-    // TODO Eliminar Lote si el estado es entregado
     public function Eliminar(Request $req, $idLote) {
         $lote = Lote::find($idLote);
         $lote -> delete();

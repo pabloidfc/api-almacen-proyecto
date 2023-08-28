@@ -42,7 +42,7 @@ class ProductoController extends Controller
     }
 
     public function Eliminar(Request $req, $idProducto) {
-        $producto = Producto::findOrFail($idProducto);
+        $producto = Producto::find($idProducto);
         $producto -> delete();
 
         return ["msg" => "El Producto ha sido eliminado correctamente!"];
