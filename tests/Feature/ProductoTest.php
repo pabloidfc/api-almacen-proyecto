@@ -14,19 +14,14 @@ class ProductoTest extends TestCase
      *
      * @return void
      */
-    public function test_example()
-    {
-        $response = $this -> get('/');
-        $response -> assertStatus(200);
-    }
-
+    
     public function test_ListarUnoQueExista() {
         $estructura = [
             "id",
             "peso",
             "estado",
             "fecha_entrega",
-            "almacen_destino",
+            "direccion_destino",
             "created_at",
             "updated_at",
             "deleted_at"
