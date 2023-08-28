@@ -17,10 +17,11 @@ class ProductoController extends Controller
 
     public function Crear(Request $req) {
         $producto = new Producto;
-        $producto -> peso            = $req -> post("peso");
-        $producto -> estado          = $req -> post("estado");
-        $producto -> fecha_entrega   = $req -> post("fecha_entrega");
-        $producto -> almacen_destino = $req -> post("almacen_destino");
+        $producto -> peso              = $req -> post("peso");
+        $producto -> almacen_id        = $req -> post("almacen_id");
+        $producto -> estado            = $req -> post("estado");
+        $producto -> fecha_entrega     = $req -> post("fecha_entrega");
+        $producto -> direccion_entrega = $req -> post("direccion_entrega");
         $producto -> save();
 
         return $producto;
