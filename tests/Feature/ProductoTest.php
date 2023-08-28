@@ -29,7 +29,7 @@ class ProductoTest extends TestCase
             "almacen_destino",
             "created_at",
             "updated_at",
-            "deleted_at",
+            "deleted_at"
         ];
         
         $res = $this -> get('/api/producto/500001');
