@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Lote;
+use App\Models\Producto;
 
 class LoteController extends Controller
 {
@@ -32,5 +33,24 @@ class LoteController extends Controller
         $lote -> delete();
 
         return ["msg" => "El Lote ha sido eliminado correctamente!"];
+    }
+
+    public function Crear(Request $req) {
+        $lote = new Lote;
+        $idsProductos = $req -> post("productos");
+
+        $lote -> peso            = $req -> post("peso");
+        $lote -> estado          = $req -> post("estado");
+        $lote -> almacen_destino = $req -> post("almacen_destino");
+        $lote -> save();
+
+        foreach ($idsProductos as $idPorducto) {
+            $producto = Producto::find($idPorducto);
+            if ($producto) {
+                $lote -> Productos() -> save($producto);
+            }
+        }
+
+        return $lote;
     }
 }
