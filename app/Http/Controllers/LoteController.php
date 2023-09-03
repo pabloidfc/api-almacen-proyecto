@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Lote;
 use App\Models\Producto;
+use App\Models\Almacen;
 
 class LoteController extends Controller
 {
@@ -63,15 +64,18 @@ class LoteController extends Controller
         
         $lote -> peso            = $req -> post("peso");
         $lote -> estado          = $req -> post("estado");
-        $lote -> almacen_destino = $req -> post("almacen_destino");
         $lote -> save();
         
+        if ($req -> has("almacen_destino")) {
+            $almacen = Almacen::find($req -> post("almacen_destino"));
+            if ($almacen) $lote -> Almacen() -> save($almacen);
+        };
+        
+
         if ($idsProductos) {
             foreach ($idsProductos as $idPorducto) {
                 $producto = Producto::find($idPorducto);
-                if ($producto) {
-                    $lote -> Productos() -> save($producto);
-                }
+                if ($producto) $lote -> Productos() -> save($producto);
             }
         }
         
