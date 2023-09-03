@@ -30,22 +30,31 @@ class ProductoController extends Controller
     public function Modificar(Request $req, $idProducto) {
         $producto = Producto::find($idProducto);
 
-        if ($req -> has("peso"))              $producto -> peso              = $req -> post("peso");
-        if ($req -> has("estado"))            $producto -> estado            = $req -> post("estado");
-        if ($req -> has("lote_id"))           $producto -> lote_id           = $req -> post("lote_id");
-        if ($req -> has("almacen_id"))        $producto -> almacen_id        = $req -> post("almacen_id");
-        if ($req -> has("fecha_entrega"))     $producto -> fecha_entrega     = $req -> post("fecha_entrega");
-        if ($req -> has("direccion_entrega")) $producto -> direccion_entrega = $req -> post("direccion_entrega");
+        if ($producto) {
+            if ($req -> has("peso"))              $producto -> peso              = $req -> post("peso");
+            if ($req -> has("estado"))            $producto -> estado            = $req -> post("estado");
+            if ($req -> has("lote_id"))           $producto -> lote_id           = $req -> post("lote_id");
+            if ($req -> has("almacen_id"))        $producto -> almacen_id        = $req -> post("almacen_id");
+            if ($req -> has("fecha_entrega"))     $producto -> fecha_entrega     = $req -> post("fecha_entrega");
+            if ($req -> has("direccion_entrega")) $producto -> direccion_entrega = $req -> post("direccion_entrega");
+            
+            
+            $producto -> save();
+            return $producto;
+        }
         
-        
-        $producto -> save();
-        return $producto;
+        return response(["msg" => "Producto no encontrado!"], 404);
     }
-
+    
     public function Eliminar(Request $req, $idProducto) {
         $producto = Producto::find($idProducto);
-        $producto -> delete();
-
-        return ["msg" => "El Producto ha sido eliminado correctamente!"];
+        
+        if ($producto) {
+            $producto -> delete();
+            
+            return ["msg" => "El Producto ha sido eliminado correctamente!"];
+        }
+        
+        return response(["msg" => "Producto no encontrado!"], 404);
     }
 }
