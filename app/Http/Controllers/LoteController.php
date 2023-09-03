@@ -48,10 +48,12 @@ class LoteController extends Controller
         $lote -> almacen_destino = $req -> post("almacen_destino");
         $lote -> save();
 
-        foreach ($idsProductos as $idPorducto) {
-            $producto = Producto::find($idPorducto);
-            if ($producto) {
-                $lote -> Productos() -> save($producto);
+        if ($idsProductos) {
+            foreach ($idsProductos as $idPorducto) {
+                $producto = Producto::find($idPorducto);
+                if ($producto) {
+                    $lote -> Productos() -> save($producto);
+                }
             }
         }
 

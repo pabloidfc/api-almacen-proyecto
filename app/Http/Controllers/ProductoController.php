@@ -32,6 +32,7 @@ class ProductoController extends Controller
 
         if ($req -> has("peso"))              $producto -> peso              = $req -> post("peso");
         if ($req -> has("estado"))            $producto -> estado            = $req -> post("estado");
+        if ($req -> has("lote_id"))           $producto -> lote_id           = $req -> post("lote_id");
         if ($req -> has("almacen_id"))        $producto -> almacen_id        = $req -> post("almacen_id");
         if ($req -> has("fecha_entrega"))     $producto -> fecha_entrega     = $req -> post("fecha_entrega");
         if ($req -> has("direccion_entrega")) $producto -> direccion_entrega = $req -> post("direccion_entrega");
