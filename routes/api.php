@@ -22,16 +22,18 @@ Route::middleware('auth:sanctum') -> get('/user', function (Request $request) {
 });
 
 Route::controller(ProductoController::class) -> group(function () {
-    Route::get("/producto",         "Listar");
-    Route::get("/producto/{id}",    "ListarUno");
-    Route::post("/producto",        "Crear");
-    Route::put("/producto/{id}",    "Modificar");
+    Route::get("/producto", "Listar");
+    Route::get("/producto/{id}", "ListarUno");
+    Route::post("/producto", "Crear");
+    Route::put("/producto/{id}", "Modificar");
     Route::delete("/producto/{id}", "Eliminar");
 });
 
 Route::controller(LoteController::class) -> group(function () {
-    Route::get("/lote",      "Listar");
+    Route::get("/lote", "Listar");
     Route::get("/lote/{id}", "ListarUno");
     Route::put("/lote/{id}", "Modificar");
-    Route::post("/lote",     "Crear");
+    Route::post("/lote", "Crear");
+    Route::delete("/lote/{id}", "Eliminar");
+    Route::put("/lote/desarmar/{id}", "Desarmar");
 });

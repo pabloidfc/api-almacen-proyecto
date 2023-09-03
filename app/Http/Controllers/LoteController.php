@@ -30,8 +30,12 @@ class LoteController extends Controller
 
     public function Eliminar(Request $req, $idLote) {
         $lote = Lote::find($idLote);
+        
+        if ($lote -> Productos() -> count() > 0) {
+            return response(["msg" => "El Lote no se ha podido eliminar!"], 400);
+        };
+        
         $lote -> delete();
-
         return ["msg" => "El Lote ha sido eliminado correctamente!"];
     }
 
@@ -52,5 +56,22 @@ class LoteController extends Controller
         }
 
         return $lote;
+    }
+
+    public function Desarmar(Request $req, $idLote) {
+        $lote = Lote::find($idLote);
+        $productos = $lote -> Productos;
+        
+        if ($productos) {
+            foreach ($productos as $producto) {
+                $producto -> lote_id = null;
+                $producto -> save();
+            }
+        }
+        
+        $lote -> estado = "Desarmado";
+        $lote -> save();
+
+        return ["msg" => "Lote desarmado correctamente!"];
     }
 }
