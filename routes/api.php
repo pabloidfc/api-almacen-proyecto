@@ -27,6 +27,7 @@ Route::controller(ProductoController::class) -> group(function () {
     Route::post("/producto", "Crear");
     Route::put("/producto/{id}", "Modificar");
     Route::delete("/producto/{id}", "Eliminar");
+    Route::get("/producto/lote/{id}", "ListarProductoLote");
 });
 
 Route::controller(LoteController::class) -> group(function () {

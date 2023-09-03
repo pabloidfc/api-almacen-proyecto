@@ -54,7 +54,18 @@ class ProductoController extends Controller
             
             return ["msg" => "El Producto ha sido eliminado correctamente!"];
         }
-        
+
+        return response(["msg" => "Producto no encontrado!"], 404);
+    }
+
+    public function ListarProductoLote(Request $req, $idProducto) {
+        $producto = Producto::find($idProducto);
+
+        if ($producto) {
+            $producto -> Lote;
+            return $producto;
+        }
+
         return response(["msg" => "Producto no encontrado!"], 404);
     }
 }
