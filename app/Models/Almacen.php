@@ -14,4 +14,8 @@ class Almacen extends Model
     public function Productos() {
         return $this -> hasMany(Producto::class);
     }
+
+    public function Lotes() {
+        return $this -> hasMany(Lote::class, "almacen_destino");
+    }
 }
