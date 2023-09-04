@@ -23,25 +23,26 @@ Route::middleware('auth:sanctum') -> get('/user', function (Request $request) {
 });
 
 Route::controller(ProductoController::class) -> group(function () {
+    Route::post("/producto", "Crear");
     Route::get("/producto", "Listar");
     Route::get("/producto/{id}", "ListarUno");
-    Route::post("/producto", "Crear");
+    Route::get("/producto/lote/{id}", "ListarProductoLote");
     Route::put("/producto/{id}", "Modificar");
     Route::delete("/producto/{id}", "Eliminar");
-    Route::get("/producto/lote/{id}", "ListarProductoLote");
 });
 
 Route::controller(LoteController::class) -> group(function () {
+    Route::post("/lote", "Crear");
     Route::get("/lote", "Listar");
     Route::get("/lote/{id}", "ListarUno");
-    Route::put("/lote/{id}", "Modificar");
-    Route::post("/lote", "Crear");
-    Route::delete("/lote/{id}", "Eliminar");
-    Route::put("/lote/desarmar/{id}", "Desarmar");
     Route::get("/lote/productos/{id}", "ListarLoteProductos");
+    Route::put("/lote/{id}", "Modificar");
+    Route::put("/lote/desarmar/{id}", "Desarmar");
+    Route::delete("/lote/{id}", "Eliminar");
 });
 
 Route::controller(AlmacenController::class) -> group(function () {
     Route::get("/almacen", "Listar");
     Route::get("/almacen/{id}", "ListarUno");
+    Route::get("/almacen/productos/{id}", "ListarAlmacenProductos");
 });

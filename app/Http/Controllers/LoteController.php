@@ -9,55 +9,6 @@ use App\Models\Almacen;
 
 class LoteController extends Controller
 {
-    public function Listar(Request $req) {
-        return Lote::all();
-    }
-
-    public function ListarLoteProductos(Request $req, $idLote) {
-        $lote = Lote::find($idLote);
-        
-        if ($lote) {
-            $lote -> Productos;
-            return $lote;
-        }
-
-        return response(["msg" => "Lote no encontrado!"], 404);
-    }
-
-    public function ListarUno(Request $req, $idLote) {
-        return Lote::findOrFail($idLote);
-    }
-
-    public function Modificar(Request $req, $idLote) {
-        $lote = Lote::find($idLote);
-
-        if ($lote) {
-            if ($req -> has("peso"))            $lote -> peso            = $req -> post("peso");
-            if ($req -> has("estado"))          $lote -> estado          = $req -> post("estado");
-            if ($req -> has("almacen_destino")) $lote -> almacen_destino = $req -> post("almacen_destino");
-    
-            $lote -> save();
-            return $lote;
-        }
-        
-        return response(["msg" => "Lote no encontrado!"], 404);
-    }
-    
-    public function Eliminar(Request $req, $idLote) {
-        $lote = Lote::find($idLote);
-        
-        if ($lote) {
-            if ($lote -> Productos() -> count() > 0) {
-                return response(["msg" => "El Lote no se ha podido eliminar!"], 400);
-            };
-            
-            $lote -> delete();
-            return ["msg" => "El Lote ha sido eliminado correctamente!"];
-        }
-
-        return response(["msg" => "Lote no encontrado!"], 404);
-    }
-    
     public function Crear(Request $req) {
         $lote = new Lote;
         $idsProductos = $req -> post("productos");
@@ -82,6 +33,40 @@ class LoteController extends Controller
         return $lote;
     }
 
+    public function Listar(Request $req) {
+        return Lote::all();
+    }
+
+    public function ListarUno(Request $req, $idLote) {
+        return Lote::findOrFail($idLote);
+    }
+
+    public function ListarLoteProductos(Request $req, $idLote) {
+        $lote = Lote::find($idLote);
+        
+        if ($lote) {
+            $lote -> Productos;
+            return $lote;
+        }
+
+        return response(["msg" => "Lote no encontrado!"], 404);
+    }
+
+    public function Modificar(Request $req, $idLote) {
+        $lote = Lote::find($idLote);
+
+        if ($lote) {
+            if ($req -> has("peso"))            $lote -> peso            = $req -> post("peso");
+            if ($req -> has("estado"))          $lote -> estado          = $req -> post("estado");
+            if ($req -> has("almacen_destino")) $lote -> almacen_destino = $req -> post("almacen_destino");
+    
+            $lote -> save();
+            return $lote;
+        }
+        
+        return response(["msg" => "Lote no encontrado!"], 404);
+    }
+    
     public function Desarmar(Request $req, $idLote) {
         $lote = Lote::find($idLote);
         
@@ -101,6 +86,21 @@ class LoteController extends Controller
             return ["msg" => "Lote desarmado correctamente!"];
         }
         
+        return response(["msg" => "Lote no encontrado!"], 404);
+    }
+
+    public function Eliminar(Request $req, $idLote) {
+        $lote = Lote::find($idLote);
+        
+        if ($lote) {
+            if ($lote -> Productos() -> count() > 0) {
+                return response(["msg" => "El Lote no se ha podido eliminar!"], 400);
+            };
+            
+            $lote -> delete();
+            return ["msg" => "El Lote ha sido eliminado correctamente!"];
+        }
+
         return response(["msg" => "Lote no encontrado!"], 404);
     }
 }

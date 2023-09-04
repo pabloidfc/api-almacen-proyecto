@@ -7,14 +7,6 @@ use App\Models\Producto;
 
 class ProductoController extends Controller
 {
-    public function Listar(Request $req) {
-        return Producto::all();
-    }
-
-    public function ListarUno(Request $req, $idProducto) {
-        return Producto::findOrFail($idProducto);
-    }
-
     public function Crear(Request $req) { // TODO: comprobar si existe el almacen_id
         $producto = new Producto;
         $producto -> peso              = $req -> post("peso");
@@ -25,6 +17,25 @@ class ProductoController extends Controller
         $producto -> save();
 
         return $producto;
+    }
+
+    public function Listar(Request $req) {
+        return Producto::all();
+    }
+
+    public function ListarUno(Request $req, $idProducto) {
+        return Producto::findOrFail($idProducto);
+    }
+
+    public function ListarProductoLote(Request $req, $idProducto) {
+        $producto = Producto::find($idProducto);
+
+        if ($producto) {
+            $producto -> Lote;
+            return $producto;
+        }
+
+        return response(["msg" => "Producto no encontrado!"], 404);
     }
 
     public function Modificar(Request $req, $idProducto) {
@@ -53,17 +64,6 @@ class ProductoController extends Controller
             $producto -> delete();
             
             return ["msg" => "El Producto ha sido eliminado correctamente!"];
-        }
-
-        return response(["msg" => "Producto no encontrado!"], 404);
-    }
-
-    public function ListarProductoLote(Request $req, $idProducto) {
-        $producto = Producto::find($idProducto);
-
-        if ($producto) {
-            $producto -> Lote;
-            return $producto;
         }
 
         return response(["msg" => "Producto no encontrado!"], 404);
