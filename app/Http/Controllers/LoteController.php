@@ -52,6 +52,17 @@ class LoteController extends Controller
         return response(["msg" => "Lote no encontrado!"], 404);
     }
 
+    public function ListarAlmacenDestino(Request $req, $idLote) {
+        $lote = Lote::find($idLote);
+        
+        if ($lote) {
+            $lote -> Almacen;
+            return $lote;
+        }
+
+        return response(["msg" => "Lote no encontrado!"], 404);
+    }
+
     public function Modificar(Request $req, $idLote) {
         $lote = Lote::find($idLote);
 

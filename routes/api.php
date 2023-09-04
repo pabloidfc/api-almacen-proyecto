@@ -37,6 +37,7 @@ Route::controller(LoteController::class) -> group(function () {
     Route::get("/lote", "Listar");
     Route::get("/lote/{id}", "ListarUno");
     Route::get("/lote/productos/{id}", "ListarLoteProductos");
+    Route::get("/lote/destino/{id}", "ListarAlmacenDestino");
     Route::put("/lote/{id}", "Modificar");
     Route::put("/lote/desarmar/{id}", "Desarmar");
     Route::delete("/lote/{id}", "Eliminar");
