@@ -38,6 +38,17 @@ class ProductoController extends Controller
         return response(["msg" => "Producto no encontrado!"], 404);
     }
 
+    public function ListarProductoAlmacen(Request $req, $idProducto) {
+        $producto = Producto::find($idProducto);
+
+        if ($producto) {
+            $producto -> Almacen;
+            return $producto;
+        }
+
+        return response(["msg" => "Producto no encontrado!"], 404);
+    }
+
     public function Modificar(Request $req, $idProducto) {
         $producto = Producto::find($idProducto);
 
