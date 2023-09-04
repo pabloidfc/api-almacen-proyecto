@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\LoteController;
+use App\Http\Controllers\AlmacenController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,4 +39,9 @@ Route::controller(LoteController::class) -> group(function () {
     Route::delete("/lote/{id}", "Eliminar");
     Route::put("/lote/desarmar/{id}", "Desarmar");
     Route::get("/lote/productos/{id}", "ListarLoteProductos");
+});
+
+Route::controller(AlmacenController::class) -> group(function () {
+    Route::get("/almacen", "Listar");
+    Route::get("/almacen/{id}", "ListarUno");
 });
