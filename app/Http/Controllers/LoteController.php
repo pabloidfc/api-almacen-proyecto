@@ -15,12 +15,15 @@ class LoteController extends Controller
         
         $lote -> peso   = $req -> post("peso");
         $lote -> estado = $req -> post("estado");
-        $lote -> save();
         
         if ($req -> has("almacen_destino")) {
             $almacen = Almacen::find($req -> post("almacen_destino"));
-            if ($almacen) $lote -> Almacen() -> save($almacen);
-        };
+            if ($almacen) {
+                $lote -> Almacen() -> associate($almacen);
+            } else {
+                return response(["msg" => "El Almacen destino no existe!"], 400);
+            }
+        }
         
 
         if ($idsProductos) {
@@ -30,6 +33,7 @@ class LoteController extends Controller
             }
         }
         
+        $lote -> save();
         return $lote;
     }
 
