@@ -45,6 +45,6 @@ class ProductoTest extends TestCase
 
     public function test_EliminarUnoQueNoExista() {
         $res = $this -> delete('/api/producto/500000');
-        $res -> assertStatus(500);
+        $res -> assertStatus(404);
     }
 }
