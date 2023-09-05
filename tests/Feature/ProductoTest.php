@@ -15,6 +15,11 @@ class ProductoTest extends TestCase
      * @return void
      */
     
+    public function test_Listar() {
+        $res = $this -> get('/api/producto');
+        $res -> assertStatus(200);
+    }
+
     public function test_ListarUnoQueExista() {
         $estructura = [
             "id",
