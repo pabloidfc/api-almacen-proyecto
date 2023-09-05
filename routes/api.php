@@ -48,6 +48,7 @@ Route::controller(LoteController::class) -> group(function () {
 Route::controller(AlmacenController::class) -> group(function () {
     Route::get("/almacen", "Listar");
     Route::get("/almacen/{id}", "ListarUno");
+    Route::get("/almacen/ubicacion/{id}", "ListarUnoUbicacion");
     Route::get("/almacen/tipo/{tipo}", "ListarPorTipo");
     Route::get("/almacen/productos/{id}", "ListarAlmacenProductos");
 });

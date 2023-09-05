@@ -21,5 +21,7 @@ class Almacen extends Model
         return $this -> hasMany(Lote::class, "almacen_destino");
     }
 
-    // TODO: Relacion con tabla Direcciones
+    public function Ubicacion() {
+        return $this -> hasOne(Ubicacion::class);
+    }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Producto;
+use App\Models\Almacen;
+use App\Models\Lote;
 
 class ProductoController extends Controller
 {
@@ -11,11 +13,28 @@ class ProductoController extends Controller
         $producto = new Producto;
         $producto -> peso              = $req -> post("peso");
         $producto -> estado            = $req -> post("estado");
-        $producto -> almacen_id        = $req -> post("almacen_id");
         $producto -> fecha_entrega     = $req -> post("fecha_entrega");
         $producto -> direccion_entrega = $req -> post("direccion_entrega");
-        $producto -> save();
+        
+        if ($req -> has("almacen_id")) {
+            $almacen = Almacen::find($req -> post("almacen_id"));
+            if ($almacen) {
+                $producto -> Almacen() -> associate($almacen);
+            } else {
+                return response(["msg" => "El Almacen no existe!"], 400);
+            }
+        }
 
+        if ($req -> has("lote_id")) {
+            $lote = Lote::find($req -> post("lote_id"));
+            if ($lote) {
+                $producto -> Lote() -> associate($lote);
+            } else {
+                return response(["msg" => "El Lote no existe!"], 400);
+            }
+        }
+
+        $producto -> save();
         return $producto;
     }
 
@@ -74,10 +93,17 @@ class ProductoController extends Controller
             if ($req -> has("peso"))              $producto -> peso              = $req -> post("peso");
             if ($req -> has("estado"))            $producto -> estado            = $req -> post("estado");
             if ($req -> has("lote_id"))           $producto -> lote_id           = $req -> post("lote_id");
-            if ($req -> has("almacen_id"))        $producto -> almacen_id        = $req -> post("almacen_id");
             if ($req -> has("fecha_entrega"))     $producto -> fecha_entrega     = $req -> post("fecha_entrega");
             if ($req -> has("direccion_entrega")) $producto -> direccion_entrega = $req -> post("direccion_entrega");
             
+            if ($req -> has("almacen_id")) {
+                $almacen = Almacen::find($req -> post("almacen_id"));
+                if ($almacen) {
+                    $producto -> Almacen() -> associate($almacen);
+                } else {
+                    return response(["msg" => "El Almacen no existe!"], 400);
+                }
+            }
             
             $producto -> save();
             return $producto;
