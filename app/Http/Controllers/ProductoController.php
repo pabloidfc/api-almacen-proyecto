@@ -7,7 +7,7 @@ use App\Models\Producto;
 
 class ProductoController extends Controller
 {
-    public function Crear(Request $req) { // TODO: comprobar si existe el almacen_id
+    public function Crear(Request $req) {
         $producto = new Producto;
         $producto -> peso              = $req -> post("peso");
         $producto -> estado            = $req -> post("estado");
@@ -25,6 +25,24 @@ class ProductoController extends Controller
 
     public function ListarUno(Request $req, $idProducto) {
         return Producto::findOrFail($idProducto);
+    }
+
+    public function ListarPorEstado(Request $req, $estadoProducto) {
+        $opciones = [
+            "En espera"  => "En espera",
+            "Almacenado" => "Almacenado",
+            "Loteado"    => "Loteado",
+            "Desloteado" => "Desloteado", 
+            "En viaje"   => "En viaje", 
+            "Entregado"  => "Entregado"
+        ];
+
+        if (isset($opciones[$estadoProducto])) {
+            $producto = Producto::where("estado", "=", $estadoProducto) -> get();
+            return $producto;
+        }
+
+        return response(["msg" => "El estado de Producto no existe!"], 400);
     }
 
     public function ListarProductoLote(Request $req, $idProducto) {

@@ -13,8 +13,8 @@ class LoteController extends Controller
         $lote = new Lote;
         $idsProductos = $req -> post("productos");
         
-        $lote -> peso            = $req -> post("peso");
-        $lote -> estado          = $req -> post("estado");
+        $lote -> peso   = $req -> post("peso");
+        $lote -> estado = $req -> post("estado");
         $lote -> save();
         
         if ($req -> has("almacen_destino")) {
@@ -39,6 +39,21 @@ class LoteController extends Controller
 
     public function ListarUno(Request $req, $idLote) {
         return Lote::findOrFail($idLote);
+    }
+
+    public function ListarPorEstado(Request $req, $estadoLote) {
+        $opciones = [
+            "Creado"    => "Creado",
+            "En viaje"  => "En viaje",
+            "Desarmado" => "Desarmado"
+        ];
+
+        if (isset($opciones[$estadoLote])) {
+            $lote = Lote::where("estado", "=", $estadoLote) -> get();
+            return $lote;
+        }
+
+        return response(["msg" => "El estado de lote no existe!"], 400);
     }
 
     public function ListarLoteProductos(Request $req, $idLote) {

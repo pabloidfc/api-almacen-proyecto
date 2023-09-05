@@ -25,4 +25,18 @@ class AlmacenController extends Controller
 
         return response(["msg" => "Almacen no encontrado!"], 404);
     }
+
+    public function ListarPorTipo(Request $req, $tipoAlmacen) {
+        $opciones = [
+            "Propio"    => "Propio",
+            "De terceros"  => "De terceros"
+        ];
+
+        if (isset($opciones[$tipoAlmacen])) {
+            $almacen = Almacen::where("tipo", "=", $tipoAlmacen) -> get();
+            return $almacen;
+        }
+
+        return response(["msg" => "El tipo de Almacen no existe!"], 400);
+    }
 }
