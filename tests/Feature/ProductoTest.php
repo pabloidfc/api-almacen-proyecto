@@ -26,7 +26,9 @@ class ProductoTest extends TestCase
             "peso",
             "estado",
             "fecha_entrega",
-            "direccion_destino",
+            "direccion_entrega",
+            "lote_id",
+            "almacen_id",
             "created_at",
             "updated_at",
             "deleted_at"
@@ -34,7 +36,7 @@ class ProductoTest extends TestCase
         
         $res = $this -> get('/api/producto/500001');
         $res -> assertStatus(200);
-        $res -> assertJsonCount(8);
+        $res -> assertJsonCount(10);
         $res -> assertJsonStructure($estructura);
     }
 
