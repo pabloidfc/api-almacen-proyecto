@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class LoteFactory extends Factory
+class AlmacenFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -13,15 +13,14 @@ class LoteFactory extends Factory
      */
     public function definition()
     {
-        $estados = [
-            "Creado",
-            "En viaje",
-            "Desarmado"
+        $tipos = [
+            "Propio",
+            "De terceros"
         ];
 
         return [
-            "peso"       => $this -> faker -> randomFloat(),
-            "estado"     => $this -> faker -> randomElement($estados),
+            "nombre"     => $this -> faker -> firstName(),
+            "tipo"       => $this -> faker -> randomElement($tipos),
             "created_at" => $this -> faker -> date("Y-m-d", "now"),
             "updated_at" => $this -> faker -> date("Y-m-d", "now")
         ];

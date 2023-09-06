@@ -21,5 +21,9 @@ class DatabaseSeeder extends Seeder
         \App\Models\Lote::factory(1)->create([
             "id" => 1
         ]);
+
+        \App\Models\Almacen::factory(1)->create([
+            "id" => 1
+        ]);
     }
 }
