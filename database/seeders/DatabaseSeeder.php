@@ -17,5 +17,9 @@ class DatabaseSeeder extends Seeder
         \App\Models\Producto::factory(1)->create([
             "id" => 1
         ]);
+
+        \App\Models\Lote::factory(1)->create([
+            "id" => 1
+        ]);
     }
 }
