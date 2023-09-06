@@ -92,7 +92,6 @@ class ProductoController extends Controller
         if ($producto) {
             if ($req -> has("peso"))              $producto -> peso              = $req -> post("peso");
             if ($req -> has("estado"))            $producto -> estado            = $req -> post("estado");
-            if ($req -> has("lote_id"))           $producto -> lote_id           = $req -> post("lote_id");
             if ($req -> has("fecha_entrega"))     $producto -> fecha_entrega     = $req -> post("fecha_entrega");
             if ($req -> has("direccion_entrega")) $producto -> direccion_entrega = $req -> post("direccion_entrega");
             
@@ -102,6 +101,15 @@ class ProductoController extends Controller
                     $producto -> Almacen() -> associate($almacen);
                 } else {
                     return response(["msg" => "El Almacen no existe!"], 400);
+                }
+            }
+
+            if ($req -> has("lote_id")) {
+                $lote = Lote::find($req -> post("lote_id"));
+                if ($lote) {
+                    $producto -> Lote() -> associate($lote);
+                } else {
+                    return response(["msg" => "El Lote no existe!"], 400);
                 }
             }
             

@@ -14,15 +14,22 @@ class ProductoFactory extends Factory
      */
     public function definition()
     {
+        $estados = [
+            "En espera",
+            "Almacenado",
+            "Loteado",
+            "Desloteado",
+            "En viaje",
+            "Entregado"
+        ];
+
         return [
-            "id",
-            "peso",
-            "estado",
-            "fecha_entrega",
-            "almacen_destino",
-            "created_at",
-            "updated_at",
-            "deleted_at"
+            "peso"              => $this -> faker -> randomFloat(),
+            "estado"            => $this -> faker -> randomElement($estados),
+            "fecha_entrega"     => $this -> faker -> date("Y-m-d", "now"),
+            "direccion_entrega" => $this -> faker -> address(),
+            "created_at"        => $this -> faker -> date("Y-m-d", "now"),
+            "updated_at"        => $this -> faker -> date("Y-m-d", "now")
         ];
     }
 }
