@@ -14,27 +14,13 @@ class ProductoController extends Controller
         $producto -> peso              = $req -> post("peso");
         $producto -> estado            = $req -> post("estado");
         $producto -> fecha_entrega     = $req -> post("fecha_entrega");
-        $producto -> direccion_entrega = $req -> post("direccion_entrega");
-        
-        
-        if ($req -> has("almacen_id")) {
-            $almacen = $this -> existeAlmacen($req -> post("almacen_id"));
+        $producto -> direccion_entrega = $req -> post("direccion_entrega");  
 
-            if ($almacen)  {
-                $producto -> Almacen() -> associate($almacen);
-            } else {
-                return response(["msg" => "El Almacen no existe!"], 400);
-            }
-        }
-
-        if ($req -> has("lote_id")) {
-            $lote = $this -> existeLote($req -> post("lote_id"));
-            
-            if ($lote) {
-                $producto -> Lote() -> associate($lote);
-            } else {
-                return response(["msg" => "El Lote no existe!"], 400);
-            }
+        $almacen = $this -> existeAlmacen($req -> post("almacen_id"));
+        if ($almacen)  {
+            $producto -> Almacen() -> associate($almacen);
+        } else {
+            return response(["msg" => "El Almacen no existe!"], 400);
         }
 
         $producto -> save();
@@ -44,11 +30,6 @@ class ProductoController extends Controller
     private function existeAlmacen($idAlmacen) {
         $almacen = Almacen::find($idAlmacen);
         return $almacen ? $almacen : false;
-    }
-
-    private function existeLote($idLote) {
-        $lote = Lote::find($idLote);
-        return $lote ? $lote : false;
     }
 
     public function Listar(Request $req) {

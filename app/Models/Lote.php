@@ -20,4 +20,6 @@ class Lote extends Model
     public function Almacen() {
         return $this -> belongsTo(Almacen::class, "almacen_destino");
     }
+
+    // TODO: ID CREADOR
 }
