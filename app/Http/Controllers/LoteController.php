@@ -66,23 +66,15 @@ class LoteController extends Controller
     public function ListarLoteProductos(Request $req, $idLote) {
         $lote = Lote::findOrFail($idLote);
         
-        if ($lote) {
-            $lote -> Productos;
-            return $lote;
-        }
-
-        return response(["msg" => "Lote no encontrado!"], 404);
+        $lote -> Productos;
+        return $lote;
     }
 
     public function ListarAlmacenDestino(Request $req, $idLote) {
         $lote = Lote::findOrFail($idLote);
         
-        if ($lote) {
-            $lote -> Almacen;
-            return $lote;
-        }
-
-        return response(["msg" => "Lote no encontrado!"], 404);
+        $lote -> Almacen;
+        return $lote;
     }
 
     public function Modificar(Request $req, $idLote) {
@@ -118,21 +110,16 @@ class LoteController extends Controller
     public function Desarmar(Request $req, $idLote) {
         $lote = Lote::findOrFail($idLote);
         
-        if ($lote) {
-            $productos = $lote -> Productos;
-            
-            foreach ($productos as $producto) {
-                $producto -> lote_id = null;
-                $producto -> save();
-            }
-            
-            $lote -> estado = "Desarmado";
-            $lote -> save();
-            
-            return ["msg" => "Lote desarmado correctamente!"];
+        $productos = $lote -> Productos;
+        foreach ($productos as $producto) {
+            $producto -> lote_id = null;
+            $producto -> save();
         }
-        
-        return response(["msg" => "Lote no encontrado!"], 404);
+            
+        $lote -> estado = "Desarmado";
+        $lote -> save();
+            
+        return ["msg" => "Lote desarmado correctamente!"];
     }
 
     public function Eliminar(Request $req, $idLote) {

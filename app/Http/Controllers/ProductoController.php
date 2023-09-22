@@ -78,23 +78,15 @@ class ProductoController extends Controller
     public function ListarProductoLote(Request $req, $idProducto) {
         $producto = Producto::findOrFail($idProducto);
 
-        if ($producto) {
-            $producto -> Lote;
-            return $producto;
-        }
-
-        return response(["msg" => "Producto no encontrado!"], 404);
+        $producto -> Lote;
+        return $producto;
     }
 
     public function ListarProductoAlmacen(Request $req, $idProducto) {
         $producto = Producto::findOrFail($idProducto);
 
-        if ($producto) {
-            $producto -> Almacen;
-            return $producto;
-        }
-
-        return response(["msg" => "Producto no encontrado!"], 404);
+        $producto -> Almacen;
+        return $producto;
     }
 
     public function Modificar(Request $req, $idProducto) {
@@ -129,13 +121,8 @@ class ProductoController extends Controller
     
     public function Eliminar(Request $req, $idProducto) {
         $producto = Producto::findOrFail($idProducto);
-        
-        if ($producto) {
-            $producto -> delete();
+        $producto -> delete();
             
-            return ["msg" => "El Producto ha sido eliminado correctamente!"];
-        }
-
-        return response(["msg" => "Producto no encontrado!"], 404);
+        return ["msg" => "El Producto ha sido eliminado correctamente!"];
     }
 }
