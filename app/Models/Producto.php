@@ -12,6 +12,10 @@ class Producto extends Model
     use SoftDeletes;
 
     protected $table = "producto";
+    
+    protected $fillable = [
+        "lote_id"
+    ];
 
     public function Lote() {
         return $this -> belongsTo(Lote::class);

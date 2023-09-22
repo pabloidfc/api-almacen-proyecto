@@ -21,5 +21,7 @@ class Lote extends Model
         return $this -> belongsTo(Almacen::class, "almacen_destino");
     }
 
-    // TODO: ID CREADOR
+    public function Creador() {
+        return $this -> belongsTo(User::class);
+    }
 }

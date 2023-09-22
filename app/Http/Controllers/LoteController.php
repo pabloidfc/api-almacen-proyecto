@@ -6,34 +6,37 @@ use Illuminate\Http\Request;
 use App\Models\Lote;
 use App\Models\Producto;
 use App\Models\Almacen;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class LoteController extends Controller
 {
     public function Crear(Request $req) {
-        $lote = new Lote;
-        $idsProductos = $req -> post("productos");
-        
-        $lote -> peso   = $req -> post("peso");
-        $lote -> estado = $req -> post("estado");
-        
-        if ($req -> has("almacen_destino")) {
-            $almacen = Almacen::find($req -> post("almacen_destino"));
-            if ($almacen) {
-                $lote -> Almacen() -> associate($almacen);
-            } else {
-                return response(["msg" => "El Almacen destino no existe!"], 400);
-            }
-        }
-        
+        $validaciones = Validator::make($req->all(), [
+            "creador_id"      => ["required", "integer", Rule::exists('users', 'id')],
+            "almacen_destino" => ["required", "integer", Rule::exists('almacen', 'id')],
+            "estado"          => "nullable|in:Creado,En viaje,Desarmado",
+            "idsProductos"    => "required|array", 
+            "idsProductos.*"  => "exists:producto,id"
+        ]);
 
-        if ($idsProductos) {
-            foreach ($idsProductos as $idPorducto) {
-                $producto = Producto::find($idPorducto);
-                if ($producto) $lote -> Productos() -> save($producto);
-            }
-        }
+        if($validaciones->fails())
+            return response($validaciones->errors(), 400);
+
+        $lote = new Lote;
+        $idsProductos = $req -> input("idsProductos", []);
         
+        $lote -> peso   = 0;
+        $lote -> estado = $req -> input("estado");
+        
+        $lote -> Almacen() -> associate($req -> almacen_destino);
+        $lote -> Creador() -> associate($req -> creador_id);
+        
+        $productos = Producto::whereIn('id', $idsProductos)->get();
+        $lote -> peso = $productos->sum('peso');
         $lote -> save();
+        $lote->Productos()->saveMany($productos);
         return $lote;
     }
 

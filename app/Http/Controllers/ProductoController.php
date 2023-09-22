@@ -27,11 +27,11 @@ class ProductoController extends Controller
             return response($validaciones->errors(), 400);
 
         $producto = new Producto;
-        $producto -> peso              = $req -> post("peso");
-        $producto -> estado            = $req -> post("estado");
-        $producto -> departamento      = $req -> post("departamento");
-        $producto -> fecha_entrega     = $req -> post("fecha_entrega");
-        $producto -> direccion_entrega = $req -> post("direccion_entrega");  
+        $producto -> peso              = $req -> input("peso");
+        $producto -> estado            = $req -> input("estado");
+        $producto -> departamento      = $req -> input("departamento");
+        $producto -> fecha_entrega     = $req -> input("fecha_entrega");
+        $producto -> direccion_entrega = $req -> input("direccion_entrega");  
 
         $producto -> Almacen() -> associate($req->almacen_id);
 
@@ -114,11 +114,11 @@ class ProductoController extends Controller
         if($validaciones->fails()) 
             return response($validaciones->errors(), 400);
 
-        $producto -> peso              = $req -> post("peso");
-        $producto -> estado            = $req -> post("estado");
-        $producto -> departamento      = $req -> post("departamento");
-        $producto -> fecha_entrega     = $req -> post("fecha_entrega");
-        $producto -> direccion_entrega = $req -> post("direccion_entrega");  
+        $producto -> peso              = $req -> input("peso");
+        $producto -> estado            = $req -> input("estado");
+        $producto -> departamento      = $req -> input("departamento");
+        $producto -> fecha_entrega     = $req -> input("fecha_entrega");
+        $producto -> direccion_entrega = $req -> input("direccion_entrega");  
         
         $producto -> Almacen() -> associate($req->almacen_id);
         $producto -> save();
