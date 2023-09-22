@@ -24,7 +24,7 @@ class ProductoController extends Controller
         ]);
 
         if($validaciones->fails()) 
-            return $validaciones->errors();
+            return response($validaciones->errors(), 400);
 
         $producto = new Producto;
         $producto -> peso              = $req -> post("peso");
@@ -112,7 +112,7 @@ class ProductoController extends Controller
         ]);
 
         if($validaciones->fails()) 
-            return $validaciones->errors();
+            return response($validaciones->errors(), 400);
 
         $producto -> peso              = $req -> post("peso");
         $producto -> estado            = $req -> post("estado");
