@@ -18,6 +18,10 @@ use App\Http\Controllers\AlmacenController;
 |
 */
 
+Route::get("/login", function () {
+    return response()->json(["msg" => "Sin permisos"]);
+}) -> name("login");
+
 Route::middleware('auth:sanctum') -> get('/user', function (Request $request) {
     return $request -> user();
 });
@@ -27,8 +31,8 @@ Route::controller(ProductoController::class) -> group(function () {
     Route::get("/producto", "Listar");
     Route::get("/producto/{id}", "ListarUno");
     Route::get("/producto/estado/{estado}", "ListarPorEstado");
-    Route::get("/producto/lote/{id}", "ListarProductoLote");
-    Route::get("/producto/almacen/{id}", "ListarProductoAlmacen");
+    Route::get("/producto/{id}/lote", "ListarProductoLote");
+    Route::get("/producto/{id}/almacen", "ListarProductoAlmacen");
     Route::put("/producto/{id}", "Modificar");
     Route::delete("/producto/{id}", "Eliminar");
 });
@@ -38,17 +42,17 @@ Route::controller(LoteController::class) -> group(function () {
     Route::get("/lote", "Listar");
     Route::get("/lote/{id}", "ListarUno");
     Route::get("/lote/estado/{estado}", "ListarPorEstado");
-    Route::get("/lote/productos/{id}", "ListarLoteProductos");
-    Route::get("/lote/destino/{id}", "ListarAlmacenDestino");
+    Route::get("/lote/{id}/productos", "ListarLoteProductos");
+    Route::get("/lote/{id}/destino", "ListarAlmacenDestino");
     Route::put("/lote/{id}", "Modificar");
-    Route::put("/lote/desarmar/{id}", "Desarmar");
+    Route::put("/lote/{id}/desarmar", "Desarmar");
     Route::delete("/lote/{id}", "Eliminar");
 });
 
 Route::controller(AlmacenController::class) -> group(function () {
     Route::get("/almacen", "Listar");
     Route::get("/almacen/{id}", "ListarUno");
-    Route::get("/almacen/ubicacion/{id}", "ListarUnoUbicacion");
+    Route::get("/almacen/{id}/ubicacion", "ListarUnoUbicacion");
     Route::get("/almacen/tipo/{tipo}", "ListarPorTipo");
-    Route::get("/almacen/productos/{id}", "ListarAlmacenProductos");
+    Route::get("/almacen/{id}/productos", "ListarAlmacenProductos");
 });

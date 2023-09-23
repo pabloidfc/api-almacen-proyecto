@@ -6,36 +6,47 @@ use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Almacen;
 use App\Models\Lote;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ProductoController extends Controller
 {
     public function Crear(Request $req) {
-        $producto = new Producto;
-        $producto -> peso              = $req -> post("peso");
-        $producto -> estado            = $req -> post("estado");
-        $producto -> fecha_entrega     = $req -> post("fecha_entrega");
-        $producto -> direccion_entrega = $req -> post("direccion_entrega");
-        
-        if ($req -> has("almacen_id")) {
-            $almacen = Almacen::find($req -> post("almacen_id"));
-            if ($almacen) {
-                $producto -> Almacen() -> associate($almacen);
-            } else {
-                return response(["msg" => "El Almacen no existe!"], 400);
-            }
-        }
+        $validaciones = Validator::make($req->all(), [
+            "almacen_id"        => ["required", "integer", Rule::exists('almacen', 'id')],
+            "estado"            => "nullable|in:En espera, Almacenado, Loteado, Desloteado, En viaje, Entregado",
+            "peso"              => "required|numeric",
+            "departamento"      => "required|alpha|min:4",
+            "direccion_entrega" => "required|string",
+            "fecha_entrega"     => "required|date"
+        ], [
+            "almacen_id.exists" => "The provided id do not match any Almacen"
+        ]);
 
-        if ($req -> has("lote_id")) {
-            $lote = Lote::find($req -> post("lote_id"));
-            if ($lote) {
-                $producto -> Lote() -> associate($lote);
-            } else {
-                return response(["msg" => "El Lote no existe!"], 400);
-            }
-        }
+        if($validaciones->fails()) 
+            return response($validaciones->errors(), 400);
+
+        $producto = new Producto;
+        $producto -> peso              = $req -> input("peso");
+        $producto -> estado            = $req -> input("estado");
+        $producto -> departamento      = $req -> input("departamento");
+        $producto -> fecha_entrega     = $req -> input("fecha_entrega");
+        $producto -> direccion_entrega = $req -> input("direccion_entrega");  
+
+        $producto -> Almacen() -> associate($req->almacen_id);
 
         $producto -> save();
         return $producto;
+    }
+
+    private function existeAlmacen($idAlmacen) {
+        $almacen = Almacen::find($idAlmacen);
+        return $almacen ? $almacen : false;
+    }
+
+    private function existeLote($idLote) {
+        $lote = Lote::find($idLote);
+        return $lote ? $lote : false;
     }
 
     public function Listar(Request $req) {
@@ -61,74 +72,57 @@ class ProductoController extends Controller
             return $producto;
         }
 
-        return response(["msg" => "El estado de Producto no existe!"], 400);
+        return response(["msg" => "Productos no encontrados!"], 404);
     }
 
     public function ListarProductoLote(Request $req, $idProducto) {
-        $producto = Producto::find($idProducto);
+        $producto = Producto::findOrFail($idProducto);
 
-        if ($producto) {
-            $producto -> Lote;
-            return $producto;
-        }
-
-        return response(["msg" => "Producto no encontrado!"], 404);
+        $producto -> Lote;
+        return $producto;
     }
 
     public function ListarProductoAlmacen(Request $req, $idProducto) {
-        $producto = Producto::find($idProducto);
+        $producto = Producto::findOrFail($idProducto);
 
-        if ($producto) {
-            $producto -> Almacen;
-            return $producto;
-        }
-
-        return response(["msg" => "Producto no encontrado!"], 404);
+        $producto -> Almacen;
+        return $producto;
     }
 
     public function Modificar(Request $req, $idProducto) {
-        $producto = Producto::find($idProducto);
+        $producto = Producto::findOrFail($idProducto);
 
-        if ($producto) {
-            if ($req -> has("peso"))              $producto -> peso              = $req -> post("peso");
-            if ($req -> has("estado"))            $producto -> estado            = $req -> post("estado");
-            if ($req -> has("fecha_entrega"))     $producto -> fecha_entrega     = $req -> post("fecha_entrega");
-            if ($req -> has("direccion_entrega")) $producto -> direccion_entrega = $req -> post("direccion_entrega");
-            
-            if ($req -> has("almacen_id")) {
-                $almacen = Almacen::find($req -> post("almacen_id"));
-                if ($almacen) {
-                    $producto -> Almacen() -> associate($almacen);
-                } else {
-                    return response(["msg" => "El Almacen no existe!"], 400);
-                }
-            }
+        $validaciones = Validator::make($req->all(), [
+            "almacen_id"        => ["required", "integer", Rule::exists('almacen', 'id')],
+            "estado"            => "nullable|in:En espera, Almacenado, Loteado, Desloteado, En viaje, Entregado",
+            "peso"              => "required|numeric",
+            "departamento"      => "required|alpha|min:4",
+            "direccion_entrega" => "required|string",
+            "fecha_entrega"     => "required|date"
+        ], [
+            "almacen_id.exists" => "The provided id do not match any Almacen"
+        ]);
 
-            if ($req -> has("lote_id")) {
-                $lote = Lote::find($req -> post("lote_id"));
-                if ($lote) {
-                    $producto -> Lote() -> associate($lote);
-                } else {
-                    return response(["msg" => "El Lote no existe!"], 400);
-                }
-            }
-            
-            $producto -> save();
-            return $producto;
-        }
+        if($validaciones->fails()) 
+            return response($validaciones->errors(), 400);
+
+        $producto -> peso              = $req -> input("peso");
+        $producto -> estado            = $req -> input("estado");
+        $producto -> departamento      = $req -> input("departamento");
+        $producto -> fecha_entrega     = $req -> input("fecha_entrega");
+        $producto -> direccion_entrega = $req -> input("direccion_entrega");  
         
-        return response(["msg" => "Producto no encontrado!"], 404);
+        $producto -> Almacen() -> associate($req->almacen_id);
+        $producto -> save();
+
+
+        return $producto;
     }
     
     public function Eliminar(Request $req, $idProducto) {
-        $producto = Producto::find($idProducto);
-        
-        if ($producto) {
-            $producto -> delete();
+        $producto = Producto::findOrFail($idProducto);
+        $producto -> delete();
             
-            return ["msg" => "El Producto ha sido eliminado correctamente!"];
-        }
-
-        return response(["msg" => "Producto no encontrado!"], 404);
+        return ["msg" => "El Producto ha sido eliminado correctamente!"];
     }
 }
