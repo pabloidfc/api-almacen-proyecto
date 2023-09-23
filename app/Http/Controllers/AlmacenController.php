@@ -16,25 +16,17 @@ class AlmacenController extends Controller
     }
     
     public function ListarUnoUbicacion(Request $req, $idAlmacen) {
-        $almacen = Almacen::find($idAlmacen);
+        $almacen = Almacen::findOrFail($idAlmacen);
 
-        if ($almacen) {
-            $almacen -> Ubicacion;
-            return $almacen;
-        }
-
-        return response(["msg" => "Almacen no encontrado!"], 404);
+        $almacen -> Ubicacion;
+        return $almacen;
     }
 
     public function ListarAlmacenProductos(Request $req, $idAlmacen) {
-        $almacen = Almacen::find($idAlmacen);
-        
-        if ($almacen) {
-            $almacen -> Productos;
-            return $almacen;
-        }
+        $almacen = Almacen::findOrFail($idAlmacen);
+        $almacen -> Productos;
 
-        return response(["msg" => "Almacen no encontrado!"], 404);
+        return $almacen;
     }
 
     public function ListarPorTipo(Request $req, $tipoAlmacen) {
