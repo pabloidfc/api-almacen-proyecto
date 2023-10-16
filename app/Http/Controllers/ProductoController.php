@@ -14,7 +14,7 @@ class ProductoController extends Controller
     public function Crear(Request $req) {
         $validaciones = Validator::make($req->all(), [
             "almacen_id"        => ["required", "integer", Rule::exists('almacen', 'id')],
-            "estado"            => "nullable|in:En espera, Almacenado, Loteado, Desloteado, En viaje, Entregado",
+            "estado"            => "nullable|in:En espera,Almacenado,Loteado,Desloteado,En viaje,Entregado",
             "peso"              => "required|numeric",
             "departamento"      => "required|alpha|min:4",
             "direccion_entrega" => "required|string",
@@ -94,7 +94,7 @@ class ProductoController extends Controller
 
         $validaciones = Validator::make($req->all(), [
             "almacen_id"        => ["required", "integer", Rule::exists('almacen', 'id')],
-            "estado"            => "nullable|in:En espera, Almacenado, Loteado, Desloteado, En viaje, Entregado",
+            "estado"            => "nullable|in:En espera,Almacenado,Loteado,Desloteado,En viaje,Entregado",
             "peso"              => "required|numeric",
             "departamento"      => "required|alpha|min:4",
             "direccion_entrega" => "required|string",
