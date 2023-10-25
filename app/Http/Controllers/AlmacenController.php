@@ -33,7 +33,7 @@ class AlmacenController extends Controller
             "tipo" => "required|in:Propio,De terceros"
         ]);
 
-        if ($validacion->fails()) return response(["msg" => $validacion->errors()], 400);
+        if ($validacion->fails()) return response($validacion->errors(), 400);
 
         $almacen = Almacen::where("tipo", "=", $tipoAlmacen)->get();
         return $almacen;

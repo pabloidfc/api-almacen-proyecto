@@ -5,128 +5,115 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Lote;
 use App\Models\Producto;
-use App\Models\Almacen;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 
 class LoteController extends Controller
 {
     public function Crear(Request $req) {
-        $validaciones = Validator::make($req->all(), [
-            "creador_id"      => ["required", "integer", Rule::exists('users', 'id')],
-            "almacen_destino" => ["required", "integer", Rule::exists('almacen', 'id')],
-            "estado"          => "nullable|in:Creado,En viaje,Desarmado",
+        $validacion = Validator::make($req->all(), [
+            "creador_id"      => "required|integer|exists:users,id",
+            "almacen_destino" => "required|integer|exists:almacen,id",
             "idsProductos"    => "required|array", 
             "idsProductos.*"  => "exists:producto,id"
         ]);
 
-        if($validaciones->fails())
-            return response($validaciones->errors(), 400);
+        if($validacion->fails()) return response($validacion->errors(), 400);
 
         $lote = new Lote;
-        $idsProductos = $req -> input("idsProductos", []);
-        
-        $lote -> peso   = 0;
-        $lote -> estado = $req -> input("estado");
-        
-        $lote -> Almacen() -> associate($req -> almacen_destino);
-        $lote -> Creador() -> associate($req -> creador_id);
-        
-        $productos = Producto::whereIn('id', $idsProductos)->get(); 
-        $lote -> peso = $productos->sum('peso');
-        $lote -> save();
+        $lote->peso = 0;
+        $lote->Creador()->associate($req->input("creador_id"));
+        $lote->Almacen()->associate($req->input("almacen_destino"));
+
+        $idsProductos = $req->input("idsProductos", []);
+        $productos = Producto::whereIn("id", $idsProductos)->get();
+        $lote->peso = $productos->sum("peso");
+        $lote->save();
         $lote->Productos()->saveMany($productos);
         return $lote;
     }
 
-    public function Listar(Request $req) {
+    public function Listar() {
         return Lote::all();
     }
 
-    public function ListarUno(Request $req, $idLote) {
-        return Lote::findOrFail($idLote);
+    public function ListarUno($idLote) {
+        $lote = Lote::find($idLote);
+        if(!$lote) return response(["msg" => "Not found!"], 404);
+        $lote -> Productos;
+        $lote -> Almacen;
+        return $lote;
     }
 
-    public function ListarPorEstado(Request $req, $estadoLote) {
-        $opciones = [
-            "Creado"    => "Creado",
-            "En viaje"  => "En viaje",
-            "Desarmado" => "Desarmado"
-        ];
+    public function ListarPorEstado(Request $req) {
+        $estadoLote = $req->input("estado");
+        $validacion = Validator::make($req->all(), [
+            "estado" => "required|in:Creado,En viaje,Desarmado"
+        ]);
 
-        if (isset($opciones[$estadoLote])) {
-            $lote = Lote::where("estado", "=", $estadoLote) -> get();
-            return $lote;
-        }
+        if($validacion->fails()) return response($validacion->errors(), 400);
 
-        return response(["msg" => "El estado de lote no existe!"], 400);
+        $lote = Lote::where("estado", "=", $estadoLote)->get();
+        return $lote;
     }
 
-    public function ListarLoteProductos(Request $req, $idLote) {
-        $lote = Lote::findOrFail($idLote);
-        
+    public function ListarLoteProductos($idLote) {
+        $lote = Lote::find($idLote);
+        if(!$lote) return response(["msg" => "Not found!"], 404);
         $lote -> Productos;
         return $lote;
     }
 
-    public function ListarAlmacenDestino(Request $req, $idLote) {
-        $lote = Lote::findOrFail($idLote);
-        
+    public function ListarAlmacenDestino($idLote) {
+        $lote = Lote::find($idLote);
+        if(!$lote) return response(["msg" => "Not found!"], 404);
         $lote -> Almacen;
         return $lote;
     }
 
     public function Modificar(Request $req, $idLote) {
-        $lote = Lote::findOrFail($idLote);
+        $lote = Lote::find($idLote);
+        if(!$lote) return response(["msg" => "Not found!"], 404);
 
-        $validaciones = Validator::make($req->all(), [
-            "creador_id"      => ["required", "integer", Rule::exists('users', 'id')],
-            "almacen_destino" => ["required", "integer", Rule::exists('almacen', 'id')],
-            "estado"          => "nullable|in:Creado,En viaje,Desarmado",
-            "idsProductos"    => "required|array", 
-            "idsProductos.*"  => "exists:producto,id"
+        $validacion = Validator::make($req->all(), [
+            "almacen_destino" => "nullable|integer|exists:almacen,id",
+            "estado"          => "nullable|in:Creado,En viaje,Desarmado"
         ]);
 
-        if($validaciones->fails())
-            return response($validaciones->errors(), 400);
-        
-        $idsProductos = $req -> input("idsProductos", []);
-    
-        $lote -> estado = $req -> input("estado");
-        
-        $lote -> Almacen() -> associate($req -> almacen_destino);
-        $lote -> Creador() -> associate($req -> creador_id);
-        
-        $productos = Producto::whereIn('id', $idsProductos)->get();
-        $lote -> peso += $productos->sum('peso');
-        $lote -> save();
-        $lote->Productos()->saveMany($productos);
+        if($validacion->fails()) return response($validacion->errors(), 400);
+                
+        if($req->input("estado")) $this->modificarEstado($lote, $req->input("estado"));
+        if($req->input("almacen_destino")) $this->modificarAlmacenDestino($lote, $req->input("almacen_destino"));
+        $lote->save();
         return $lote;
-
-        return response(["msg" => "Lote no encontrado!"], 404);
     }
-    
-    public function Desarmar(Request $req, $idLote) {
-        $lote = Lote::findOrFail($idLote);
-        
-        $productos = $lote -> Productos;
+
+    private function modificarEstado($lote, $estado) {
+        $lote->estado = $estado;
+    }
+
+    private function modificarAlmacenDestino($lote, $idAlmacen) {
+        $lote->Almacen()->associate($idAlmacen);
+    }
+
+    public function Desarmar($idLote) {
+        $lote = Lote::find($idLote);
+        if(!$lote) return response(["msg" => "Not found!"], 404);
+
+        $productos = $lote->Productos;
         foreach ($productos as $producto) {
-            $producto -> lote_id = null;
-            $producto -> save();
+            $producto->lote_id = null;
+            $producto->save();
         }
             
-        $lote -> estado = "Desarmado";
-        $lote -> save();
-            
-        return ["msg" => "Lote desarmado correctamente!"];
+        $lote->estado = "Desarmado";
+        $lote->save();
+        return response(["msg" => "Desarmado!"], 200);
     }
 
-    public function Eliminar(Request $req, $idLote) {
-        $lote = Lote::findOrFail($idLote);
-            
-        $lote -> delete();
-        return ["msg" => "El Lote ha sido eliminado correctamente!"];
-
+    public function Eliminar($idLote) {
+        $lote = Lote::find($idLote);
+        if(!$lote) return response(["msg" => "Not found!"], 404);
+        $lote->delete();
+        return ["msg" => "Eliminado!"];
     }
 }

@@ -41,12 +41,12 @@ Route::middleware("validarApiToken") -> group(function () {
     Route::controller(LoteController::class) -> group(function () {
         Route::post("/lote", "Crear");
         Route::get("/lote", "Listar");
+        Route::get("/lote/estado", "ListarPorEstado");
         Route::get("/lote/{id}", "ListarUno");
-        Route::get("/lote/estado/{estado}", "ListarPorEstado");
+        Route::put("/lote/{id}", "Modificar");
         Route::get("/lote/{id}/productos", "ListarLoteProductos");
         Route::get("/lote/{id}/destino", "ListarAlmacenDestino");
-        Route::put("/lote/{id}", "Modificar");
-        Route::put("/lote/{id}/desarmar", "Desarmar");
+        Route::get("/lote/{id}/desarmar", "Desarmar");
         Route::delete("/lote/{id}", "Eliminar");
     });
     

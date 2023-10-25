@@ -66,7 +66,7 @@ class ProductoController extends Controller
         $validacion = Validator::make($req->all(), [
             "estado" => "required|in:En espera,Almacenado,Loteado,En ruta,Desloteado,En viaje,Entregado"
         ]);
-        if($validacion->fails()) return response(["msg" => $validacion->errors()], 400);
+        if($validacion->fails()) return response($validacion->errors(), 400);
 
         $producto = Producto::where("estado", "=", $estadoProducto)->get();
 
