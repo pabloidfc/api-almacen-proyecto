@@ -52,9 +52,8 @@ Route::middleware("validarApiToken") -> group(function () {
     
     Route::controller(AlmacenController::class) -> group(function () {
         Route::get("/almacen", "Listar");
+        Route::get("/almacen/tipo", "ListarPorTipo");
         Route::get("/almacen/{id}", "ListarUno");
-        Route::get("/almacen/{id}/ubicacion", "ListarUnoUbicacion");
-        Route::get("/almacen/tipo/{tipo}", "ListarPorTipo");
         Route::get("/almacen/{id}/productos", "ListarAlmacenProductos");
     });
 });
