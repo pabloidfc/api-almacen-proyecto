@@ -15,15 +15,15 @@ class AlmacenController extends Controller
     public function ListarUno($idAlmacen) {
         $almacen = Almacen::find($idAlmacen);
         if (!$almacen) return response(["msg" => "Not found!"], 404);
-        $almacen -> Ubicacion;
+        $almacen->Ubicacion;
         return $almacen;
     }
 
     public function ListarAlmacenProductos($idAlmacen) {
         $almacen = Almacen::find($idAlmacen);
         if (!$almacen) return response(["msg" => "Not found!"], 404);
-        $almacen -> Ubicacion;
-        $almacen -> Productos;
+        $almacen->Ubicacion;
+        $almacen->Productos;
         return $almacen;
     }
 
@@ -35,7 +35,7 @@ class AlmacenController extends Controller
 
         if ($validacion->fails()) return response(["msg" => $validacion->errors()], 400);
 
-        $almacen = Almacen::where("tipo", "=", $tipoAlmacen) -> get();
+        $almacen = Almacen::where("tipo", "=", $tipoAlmacen)->get();
         return $almacen;
     }
 }

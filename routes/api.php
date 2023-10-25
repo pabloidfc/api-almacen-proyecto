@@ -30,11 +30,11 @@ Route::middleware("validarApiToken") -> group(function () {
     Route::controller(ProductoController::class) -> group(function () {
         Route::post("/producto", "Crear");
         Route::get("/producto", "Listar");
+        Route::get("/producto/estado", "ListarPorEstado");
         Route::get("/producto/{id}", "ListarUno");
-        Route::get("/producto/estado/{estado}", "ListarPorEstado");
+        Route::put("/producto/{id}", "Modificar");
         Route::get("/producto/{id}/lote", "ListarProductoLote");
         Route::get("/producto/{id}/almacen", "ListarProductoAlmacen");
-        Route::put("/producto/{id}", "Modificar");
         Route::delete("/producto/{id}", "Eliminar");
     });
     
