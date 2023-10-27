@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Ubicacion extends Model
 {
@@ -13,5 +14,9 @@ class Ubicacion extends Model
 
     public function Almacen() {
         return $this -> belongsTo(Almacen::class);
+    }
+
+    public function Usuario() {
+        return $this -> belongsTo(User::class);
     }
 }
