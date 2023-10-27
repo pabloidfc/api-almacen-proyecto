@@ -24,4 +24,8 @@ class Almacen extends Model
     public function Ubicacion() {
         return $this -> hasOne(Ubicacion::class);
     }
+
+    public function Funcionarios() {
+        return $this -> hasMany(Funcionarios::class);
+    }
 }
