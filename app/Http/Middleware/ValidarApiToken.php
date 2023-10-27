@@ -26,11 +26,12 @@ class ValidarApiToken
                 "Authorization" => "Bearer " . $token,
             ])->get("http://localhost:8000/api/validate");
     
-            if ($res->getStatusCode() == "200") {
-                return $next($request);
-            } else {
-                return response(["msg" => __("auth.failed")], 401);
-            }
+            if ($res->getStatusCode() != "200") return response(["msg" => __("auth.failed")], 401);
+
+            $usuario = $res->json();
+            $request->attributes->add(["user_id" => $usuario["id"]]);
+
+            return $next($request);
         } catch (\Exception $err) {
             return response(["msg" => "An exception occurred"], 500);
         }

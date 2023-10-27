@@ -10,8 +10,9 @@ use Illuminate\Support\Facades\Validator;
 class LoteController extends Controller
 {
     public function Crear(Request $req) {
+        $creadorId = $req->attributes->get("user_id");
+
         $validacion = Validator::make($req->all(), [
-            "creador_id"      => "required|integer|exists:users,id",
             "almacen_destino" => "required|integer|exists:almacen,id",
             "idsProductos"    => "required|array", 
             "idsProductos.*"  => "exists:producto,id"
@@ -21,7 +22,7 @@ class LoteController extends Controller
 
         $lote = new Lote;
         $lote->peso = 0;
-        $lote->Creador()->associate($req->input("creador_id"));
+        $lote->Creador()->associate($creadorId);
         $lote->Almacen()->associate($req->input("almacen_destino"));
 
         $idsProductos = $req->input("idsProductos", []);
