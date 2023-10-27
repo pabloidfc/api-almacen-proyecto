@@ -22,11 +22,11 @@ Route::get("/login", function () {
     return response()->json(["msg" => "Sin permisos"]);
 }) -> name("login");
 
-Route::middleware('auth:sanctum') -> get('/user', function (Request $request) {
+Route::middleware("auth:sanctum") -> get("/user", function (Request $request) {
     return $request -> user();
 });
 
-Route::middleware("validarApiToken") -> group(function () {
+Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:Propio"]], function () {
     Route::controller(ProductoController::class) -> group(function () {
         Route::post("/producto", "Crear");
         Route::get("/producto", "Listar");
@@ -55,5 +55,11 @@ Route::middleware("validarApiToken") -> group(function () {
         Route::get("/almacen/tipo", "ListarPorTipo");
         Route::get("/almacen/{id}", "ListarUno");
         Route::get("/almacen/{id}/productos", "ListarAlmacenProductos");
+    });
+});
+
+Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:De terceros"]], function () {
+    Route::controller(ProductoController::class) -> group(function () {
+        Route::post("/producto", "Crear");
     });
 });
