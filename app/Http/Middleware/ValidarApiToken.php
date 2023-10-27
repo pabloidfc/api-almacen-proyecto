@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use App\Models\Funcionario;
 
 class ValidarApiToken
 {
@@ -30,10 +29,6 @@ class ValidarApiToken
             if ($res->getStatusCode() != "200") return response(["msg" => __("auth.failed")], 401);
 
             $usuario = $res->json();
-            $funcionario = Funcionario::where("id", $usuario["id"])->first();
-
-            if (!$funcionario) return response(["msg" => __("auth.failed")], 401);
-
             $request->attributes->add(["user_id" => $usuario["id"]]);
             return $next($request);
         } catch (\Exception $err) {
