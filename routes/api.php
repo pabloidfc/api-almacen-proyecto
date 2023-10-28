@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\LoteController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\VehiculoController;
+use App\Http\Controllers\TransportistaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,14 +19,6 @@ use App\Http\Controllers\VehiculoController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-Route::get("/login", function () {
-    return response()->json(["msg" => "Sin permisos"]);
-}) -> name("login");
-
-Route::middleware("auth:sanctum") -> get("/user", function (Request $request) {
-    return $request -> user();
-});
 
 Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:Propio"]], function () {
     Route::controller(ProductoController::class) -> group(function () {
@@ -62,6 +55,11 @@ Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:Propio"]], f
         Route::get("/vehiculo", "Listar");
         Route::get("/vehiculo/estado", "ListarPorEstado");
         Route::get("/vehiculo/{id}", "ListarUno");
+    });
+
+    Route::controller(TransportistaController::class) -> group(function () {
+        Route::get("/transportista", "Listar");
+        Route::get("/transportista/{id}", "ListarUno");
     });
 });
 
