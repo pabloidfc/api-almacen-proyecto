@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\LoteController;
 use App\Http\Controllers\AlmacenController;
+use App\Http\Controllers\VehiculoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +56,12 @@ Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:Propio"]], f
         Route::get("/almacen/tipo", "ListarPorTipo");
         Route::get("/almacen/{id}", "ListarUno");
         Route::get("/almacen/{id}/productos", "ListarAlmacenProductos");
+    });
+
+    Route::controller(VehiculoController::class) -> group(function () {
+        Route::get("/vehiculo", "Listar");
+        Route::get("/vehiculo/estado", "ListarPorEstado");
+        Route::get("/vehiculo/{id}", "ListarUno");
     });
 });
 
