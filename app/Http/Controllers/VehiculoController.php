@@ -40,14 +40,23 @@ class VehiculoController extends Controller
         if($validacion->fails()) return response($validacion->errors(), 400);
 
         $vehiculo = Vehiculo::find($req->input("vehiculo_id"));
-        if($vehiculo->estado != "Disponible") return response(["msg" => "Vehiculo not available!"]);
+        if($vehiculo->estado == "En reparación") return response(["msg" => "Vehiculo not available!"]);
 
         $idsTransportistas = $req->input("idsTransportistas", []);
         $transportistas = Transportista::whereIn("user_id", $idsTransportistas)->get();
         $vehiculo->Transportista()->saveMany($transportistas);
 
         $vehiculo->Transportista;
+        return $vehiculo;
+    }
 
+    public function DesasignarTransportistas(Request $req) {
+        $validacion = Validator::make($req->all(), [
+            "vehiculo_id" => "required|integer|exists:vehiculo,id"
+        ]);
+        if($validacion->fails()) return response($validacion->errors(), 400);
+        $vehiculo = Vehiculo::find($req->input("vehiculo_id"));
+        $vehiculo->Transportista()->update(["vehiculo_id" => null]);
         return $vehiculo;
     }
 }
