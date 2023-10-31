@@ -54,6 +54,7 @@ Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:Propio"]], f
     Route::controller(VehiculoController::class) -> group(function () {
         Route::get("/vehiculo", "Listar");
         Route::get("/vehiculo/estado", "ListarPorEstado");
+        Route::post("/vehiculo/transportistas", "AsignarTransportistas");
         Route::get("/vehiculo/{id}", "ListarUno");
     });
 
