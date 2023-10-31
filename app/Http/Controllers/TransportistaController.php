@@ -14,6 +14,7 @@ class TransportistaController extends Controller
     public function ListarUno($idTransportista) {
         $transportista = Transportista::find($idTransportista);
         if (!$transportista) return response(["msg" => "Not found!"], 404);
+        $transportista->Vehiculo;
         return $transportista;
     }
 }

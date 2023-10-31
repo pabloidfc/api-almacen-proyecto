@@ -30,7 +30,7 @@ class LoteController extends Controller
         $lote->peso = $productos->sum("peso");
         $lote->save();
         $lote->Productos()->saveMany($productos);
-        
+
         $lote->Productos;
         return $lote;
     }
@@ -102,12 +102,7 @@ class LoteController extends Controller
         $lote = Lote::find($idLote);
         if(!$lote) return response(["msg" => "Not found!"], 404);
 
-        $productos = $lote->Productos;
-        foreach ($productos as $producto) {
-            $producto->lote_id = null;
-            $producto->save();
-        }
-            
+        $lote->Productos()->update(["lote_id" => null]);
         $lote->estado = "Desarmado";
         $lote->save();
         return response(["msg" => "Desarmado!"], 200);
