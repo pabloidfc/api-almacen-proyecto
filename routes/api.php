@@ -67,6 +67,6 @@ Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:Propio"]], f
 
 Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:De terceros"]], function () {
     Route::controller(ProductoController::class) -> group(function () {
-        Route::post("/producto", "Crear");
+        Route::post("empresa/producto", "Crear");
     });
 });
