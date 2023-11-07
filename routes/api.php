@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\LoteController;
 use App\Http\Controllers\AlmacenController;
+use App\Http\Controllers\RutaController;
 use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\TransportistaController;
 
@@ -62,6 +63,11 @@ Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:Propio"]], f
     Route::controller(TransportistaController::class) -> group(function () {
         Route::get("/transportista", "Listar");
         Route::get("/transportista/{id}", "ListarUno");
+    });
+
+    Route::controller(RutaController::class) -> group(function () {
+        Route::get("/ruta", "Listar");
+        Route::get("/ruta/{id}", "ListarUno");
     });
 });
 
