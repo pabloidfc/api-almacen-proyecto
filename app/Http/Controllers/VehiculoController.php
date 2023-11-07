@@ -16,6 +16,7 @@ class VehiculoController extends Controller
     public function ListarUno($idVehiculo) {
         $vehiculo = Vehiculo::find($idVehiculo);
         if(!$vehiculo) return response(["msg" => "Not found!"], 404);
+        $vehiculo->Transportista;
         return $vehiculo;
     }
 
