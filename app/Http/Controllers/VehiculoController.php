@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Vehiculo;
 use App\Models\Transportista;
+use App\Models\Lote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -68,11 +69,14 @@ class VehiculoController extends Controller
             "idsLotes.*" => "exists:lote,id",
             "salida_programada" => "required|date_format:Y-m-d H:i:s"
         ]);
-        if($validacion->fails()) return response($validacion->errors(), 400);
 
+        if($validacion->fails()) return response($validacion->errors(), 400);
+        
         $vehiculo = Vehiculo::find( $req->input("vehiculo_id") );
         $idsLotes = $req->input("idsLotes", []);
         $salidaProgramada = $req->input("salida_programada");
+        
+        if( $this->checkPeso($vehiculo, $idsLotes) ) return response(["msg" => "Wrong weight!"], 400);
 
         $this->CrearVehiculoTransporta($vehiculo, $idsLotes, $salidaProgramada);
 
@@ -91,5 +95,13 @@ class VehiculoController extends Controller
             ]); 
             $orden++;
         }
+    }
+
+    private function checkPeso($vehiculo, $idsLotes) {
+        $lotes = Lote::whereIn("id", $idsLotes)->get();
+        $limitePesoVehiculo = $vehiculo->limite_peso;
+        $pesoLotes = $lotes->sum("peso");
+
+        return $pesoLotes > $limitePesoVehiculo;
     }
 }
