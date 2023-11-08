@@ -60,4 +60,36 @@ class VehiculoController extends Controller
         $vehiculo->Transportista()->update(["vehiculo_id" => null]);
         return $vehiculo;
     }
+
+    public function CrearViaje(Request $req) {
+        $validacion = Validator::make($req->all(), [
+            "vehiculo_id" => "required|integer|exists:vehiculo,id",
+            "idsLotes" => "required|array",
+            "idsLotes.*" => "exists:lote,id",
+            "salida_programada" => "required|date_format:Y-m-d H:i:s"
+        ]);
+        if($validacion->fails()) return response($validacion->errors(), 400);
+
+        $vehiculo = Vehiculo::find( $req->input("vehiculo_id") );
+        $idsLotes = $req->input("idsLotes", []);
+        $salidaProgramada = $req->input("salida_programada");
+
+        $this->CrearVehiculoTransporta($vehiculo, $idsLotes, $salidaProgramada);
+
+        $vehiculo->VehiculoTransporta;
+        return $vehiculo;
+    }
+
+    private function CrearVehiculoTransporta($vehiculo, $idsLotes, $salidaProgramada) {
+        $orden = 1;
+
+        foreach($idsLotes as $idLote) {
+            $vehiculo->VehiculoTransporta()->create([
+                "lote_id" => $idLote,
+                "orden" => $orden,
+                "salida_programada" => $salidaProgramada
+            ]); 
+            $orden++;
+        }
+    }
 }

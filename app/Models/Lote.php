@@ -24,4 +24,8 @@ class Lote extends Model
     public function Creador() {
         return $this -> belongsTo(User::class);
     }
+
+    public function VehiculoTransporta() {
+        return $this -> hasMany(VehiculoTransporta::class, "lote_id");
+    }
 }
