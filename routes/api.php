@@ -9,6 +9,7 @@ use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\RutaController;
 use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\TransportistaController;
+use App\Http\Controllers\UsuarioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,10 +71,17 @@ Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:Propio"]], f
         Route::get("/ruta", "Listar");
         Route::get("/ruta/{id}", "ListarUno");
     });
+
+    Route::controller(UsuarioController::class) -> group(function () {
+        Route::get("/usuario", "ListarUsuario");
+    });
 });
 
 Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:De terceros"]], function () {
     Route::controller(ProductoController::class) -> group(function () {
-        Route::post("empresa/producto", "Crear");
+        Route::post("tercerizado/producto", "Crear");
+    });
+    Route::controller(UsuarioController::class) -> group(function () {
+        Route::get("tercerizado/usuario", "ListarUsuario");
     });
 });
