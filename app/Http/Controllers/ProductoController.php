@@ -35,7 +35,8 @@ class ProductoController extends Controller
             "almacen_id"        => "required|integer|exists:almacen,id",
             "peso"              => "required|numeric|min:1",
             "departamento"      => "required|in:" . implode(',', self::DEPARTAMENTOS_URUGUAY),
-            "direccion_entrega" => "required|string"
+            "direccion_entrega" => "required|string",
+            "fecha_entrega"     => "required|date|fecha_mayor_actual|fecha_menor_actual_mas_dos_dias"
         ]);
 
         if($validaciones->fails()) 
@@ -45,6 +46,7 @@ class ProductoController extends Controller
         $producto->peso              = $req->input("peso");
         $producto->departamento      = $req->input("departamento");
         $producto->direccion_entrega = $req->input("direccion_entrega");  
+        $producto->fecha_entrega     = $req->input("fecha_entrega");
         $producto->Almacen()->associate($req->input("almacen_id"));
         $producto->save();
         return $producto;
