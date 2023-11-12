@@ -84,4 +84,7 @@ Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:De terceros"
     Route::controller(UsuarioController::class) -> group(function () {
         Route::get("tercerizado/usuario", "ListarUsuario");
     });
+    Route::controller(AlmacenController::class) -> group(function () {
+        Route::get("tercerizado/almacen", "ListarPorTipo");
+    });
 });
