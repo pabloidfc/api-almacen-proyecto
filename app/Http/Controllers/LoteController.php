@@ -30,13 +30,16 @@ class LoteController extends Controller
         $lote->peso = $productos->sum("peso");
         $lote->save();
         $lote->Productos()->saveMany($productos);
+        $lote->Productos()->saveMany($productos);
+        $lote->Productos()->update(["estado" => "Loteado"]);
 
         $lote->Productos;
         return $lote;
     }
 
     public function Listar() {
-        return Lote::all();
+        $lotes = Lote::paginate(12);
+        return $lotes;
     }
 
     public function ListarUno($idLote) {

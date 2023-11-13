@@ -53,7 +53,15 @@ class ProductoController extends Controller
     }
 
     public function Listar() {
-        return Producto::all();
+        $productos = Producto::paginate(12);
+        return $productos;
+    }
+    
+    public function ListarLootear() {
+        $productos = Producto::whereIn("estado", ["En espera", "Almacenado"])
+        ->paginate(12);
+
+        return $productos;
     }
 
     public function ListarUno($idProducto) {

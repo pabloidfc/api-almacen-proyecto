@@ -26,6 +26,7 @@ Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:Propio"]], f
     Route::controller(ProductoController::class) -> group(function () {
         Route::post("/producto", "Crear");
         Route::get("/producto", "Listar");
+        Route::get("/producto/lootear", "ListarLootear");
         Route::get("/producto/estado", "ListarPorEstado");
         Route::get("/producto/{id}", "ListarUno");
         Route::put("/producto/{id}", "Modificar");
