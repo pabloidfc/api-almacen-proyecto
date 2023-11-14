@@ -14,4 +14,8 @@ class UsuarioController extends Controller
         $usuario->Telefono;
         return $usuario;
     }
+
+    public function Listar() {
+        return User::all();
+    }
 }
