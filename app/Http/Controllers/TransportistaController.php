@@ -8,8 +8,8 @@ use App\Models\Transportista;
 class TransportistaController extends Controller
 {
     public function Listar() {
-        $transportista = Transportista::paginate(12);
-        return $transportista;
+        $transportistas = Transportista::with("Usuario")->paginate(12);
+        return $transportistas;
     }
 
     public function ListarUno($idTransportista) {
