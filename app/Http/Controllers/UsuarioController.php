@@ -18,4 +18,10 @@ class UsuarioController extends Controller
     public function Listar() {
         return User::all();
     }
+
+    public function ListarUno($idUsuario) {
+        $usuario = User::find($idUsuario);
+        if(!$usuario) return response(["msg" => "Not found!"], 404);
+        return $usuario;
+    }
 }

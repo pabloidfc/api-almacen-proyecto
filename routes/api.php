@@ -76,6 +76,7 @@ Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:Propio"]], f
     Route::controller(UsuarioController::class) -> group(function () {
         Route::get("/usuario", "Listar");
         Route::get("/usuario/token", "ListarUsuario");
+        Route::get("/usuario/{id}", "ListarUno");
     });
 });
 

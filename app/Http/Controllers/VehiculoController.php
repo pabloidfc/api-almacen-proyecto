@@ -17,9 +17,8 @@ class VehiculoController extends Controller
     }
 
     public function ListarUno($idVehiculo) {
-        $vehiculo = Vehiculo::find($idVehiculo);
+        $vehiculo = Vehiculo::with("Transportista.Usuario")->find($idVehiculo);
         if(!$vehiculo) return response(["msg" => "Not found!"], 404);
-        $vehiculo->Transportista;
         return $vehiculo;
     }
 
@@ -34,35 +33,34 @@ class VehiculoController extends Controller
         return $vehiculo;
     }
 
-    // public function AsignarTransportistas(Request $req) {
-    //     $validacion = Validator::make($req->all(), [
-    //         "vehiculo_id"         => "required|integer|exists:vehiculo,id",
-    //         "idsTransportistas"   => "required|array", 
-    //         "idsTransportistas.*" => "exists:transportista,user_id"
-    //     ]);
+    public function AsignarTransportistas(Request $req) {
+        $validacion = Validator::make($req->all(), [
+            "vehiculo_id"         => "required|integer|exists:vehiculo,id",
+            "idsTransportistas"   => "nullable|array", 
+            "idsTransportistas.*" => "exists:transportista,user_id"
+        ]);
 
-    //     if($validacion->fails()) return response($validacion->errors(), 400);
+        if($validacion->fails()) return response($validacion->errors(), 400);
 
-    //     $vehiculo = Vehiculo::find($req->input("vehiculo_id"));
-    //     if($vehiculo->estado == "En reparación") return response(["msg" => "Vehiculo not available!"]);
+        $vehiculo = Vehiculo::find($req->input("vehiculo_id"));
+        if(
+            $vehiculo->estado == "En reparación" ||
+            $vehiculo->estado == "En viaje"
+        ) return response(["msg" => "Vehiculo not available!"]);
 
-    //     $idsTransportistas = $req->input("idsTransportistas", []);
-    //     $transportistas = Transportista::whereIn("user_id", $idsTransportistas)->get();
-    //     $vehiculo->Transportista()->saveMany($transportistas);
+        $this->DesasignarTransportistas($vehiculo);
 
-    //     $vehiculo->Transportista;
-    //     return $vehiculo;
-    // }
+        $idsTransportistas = $req->input("idsTransportistas", []);
+        $transportistas = Transportista::whereIn("user_id", $idsTransportistas)->get();
+        $vehiculo->Transportista()->saveMany($transportistas);
 
-    // public function DesasignarTransportistas(Request $req) {
-    //     $validacion = Validator::make($req->all(), [
-    //         "vehiculo_id" => "required|integer|exists:vehiculo,id"
-    //     ]);
-    //     if($validacion->fails()) return response($validacion->errors(), 400);
-    //     $vehiculo = Vehiculo::find($req->input("vehiculo_id"));
-    //     $vehiculo->Transportista()->update(["vehiculo_id" => null]);
-    //     return $vehiculo;
-    // }
+        $vehiculo->Transportista;
+        return $vehiculo;
+    }
+
+    private function DesasignarTransportistas($vehiculo) {
+        $vehiculo->Transportista()->update(["vehiculo_id" => null]);
+    }
 
     // public function CrearViaje(Request $req) {
     //     $validacion = Validator::make($req->all(), [
