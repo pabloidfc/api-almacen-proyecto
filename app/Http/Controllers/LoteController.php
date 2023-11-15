@@ -51,14 +51,13 @@ class LoteController extends Controller
     }
 
     public function ListarPorEstado(Request $req) {
-        $estadoLote = $req->input("estado");
         $validacion = Validator::make($req->all(), [
             "estado" => "required|in:Creado,En viaje,Desarmado"
         ]);
-
+        
         if($validacion->fails()) return response($validacion->errors(), 400);
-
-        $lote = Lote::where("estado", "=", $estadoLote)->get();
+        $estadoLote = $req->input("estado");
+        $lote = Lote::where("estado", "=", $estadoLote)->paginate(12);
         return $lote;
     }
 

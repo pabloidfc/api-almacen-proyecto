@@ -62,64 +62,63 @@ class VehiculoController extends Controller
         $vehiculo->Transportista()->update(["vehiculo_id" => null]);
     }
 
-    // public function CrearViaje(Request $req) {
-    //     $validacion = Validator::make($req->all(), [
-    //         "vehiculo_id" => "required|integer|exists:vehiculo,id",
-    //         "idsLotes" => "required|array",
-    //         "idsLotes.*" => "exists:lote,id",
-    //         "ruta_id" => "required|integer|exists:ruta,id",
-    //         "salida_programada" => "required|date_format:Y-m-d H:i:s"
-    //     ]);
+    public function CrearViaje(Request $req) {
+        $validacion = Validator::make($req->all(), [
+            "vehiculo_id" => "required|integer|exists:vehiculo,id",
+            "idsLotes" => "required|array",
+            "idsLotes.*" => "exists:lote,id",
+            "ruta_id" => "required|integer|exists:ruta,id",
+            "salida_programada" => "required|date_format:Y-m-d H:i:s|fecha_mayor_actual"
+        ]);
 
-    //     if($validacion->fails()) return response($validacion->errors(), 400);
+        if($validacion->fails()) return response($validacion->errors(), 400);
         
-    //     $vehiculo = Vehiculo::find( $req->input("vehiculo_id") );
-    //     $idsLotes = $req->input("idsLotes", []);
-    //     $salidaProgramada = $req->input("salida_programada");
-    //     $idRuta = $req->input("ruta_id");
+        $vehiculo = Vehiculo::find( $req->input("vehiculo_id") );
+        $idsLotes = $req->input("idsLotes", []);
+        $salidaProgramada = $req->input("salida_programada");
+        $idRuta = $req->input("ruta_id");
         
-    //     if( $this->checkPeso($vehiculo, $idsLotes) ) return response(["msg" => "Wrong weight!"], 400);
+        if( $this->checkPeso($vehiculo, $idsLotes) ) return response(["msg" => "Wrong weight!"], 400);
 
-    //     $this->CrearViajeAsignado($idRuta, $vehiculo, $idsLotes);
-    //     $this->CrearVehiculoTransporta($vehiculo, $idsLotes, $salidaProgramada);
+        $this->CrearViajeAsignado($idRuta, $vehiculo, $idsLotes);
+        $this->CrearVehiculoTransporta($vehiculo, $idsLotes, $salidaProgramada);
 
-    //     $vehiculo->VehiculoTransporta;
-    //     return $vehiculo;
-    // }
+        $vehiculo->VehiculoTransporta;
+        return response($vehiculo, 201);
+    }
 
-    // private function CrearVehiculoTransporta($vehiculo, $idsLotes, $salidaProgramada) {
-    //     $orden = 1;
+    private function CrearVehiculoTransporta($vehiculo, $idsLotes, $salidaProgramada) {
+        $orden = 1;
 
-    //     foreach($idsLotes as $idLote) {
-    //         $vehiculo->VehiculoTransporta()->create([
-    //             "lote_id" => $idLote,
-    //             "orden" => $orden,
-    //             "salida_programada" => $salidaProgramada
-    //         ]); 
-    //         $orden++;
-    //     }
-    // }
+        foreach($idsLotes as $idLote) {
+            $vehiculo->VehiculoTransporta()->create([
+                "lote_id" => $idLote,
+                "orden" => $orden,
+                "salida_programada" => $salidaProgramada
+            ]); 
+            $orden++;
+        }
+    }
 
-    // private function CrearViajeAsignado($idRuta, $vehiculo, $idsLotes) {
-    //     $viaje = new Viaje;
-    //     $viaje->Ruta()->associate($idRuta);
+    private function CrearViajeAsignado($idRuta, $vehiculo, $idsLotes) {
+        $viaje = new Viaje;
+        $viaje->Ruta()->associate($idRuta);
+        $viaje->save();
 
-    //     foreach($idsLotes as $idLote) {
-    //         $viaje->ViajeAsignado()->create([
-    //             "vehiculo_id" => $vehiculo->id,
-    //             "lote_id" => $idLote,
-    //             "viaje_id" => $viaje->id
-    //         ]);
-    //     }
+        foreach($idsLotes as $idLote) {
+            $viaje->ViajeAsignado()->create([
+                "vehiculo_id" => $vehiculo->id,
+                "lote_id" => $idLote,
+                "viaje_id" => $viaje->id
+            ]);
+        }
+    }
 
-    //     $viaje->save();
-    // }
+    private function checkPeso($vehiculo, $idsLotes) {
+        $lotes = Lote::whereIn("id", $idsLotes)->get();
+        $limitePesoVehiculo = $vehiculo->limite_peso;
+        $pesoLotes = $lotes->sum("peso");
 
-    // private function checkPeso($vehiculo, $idsLotes) {
-    //     $lotes = Lote::whereIn("id", $idsLotes)->get();
-    //     $limitePesoVehiculo = $vehiculo->limite_peso;
-    //     $pesoLotes = $lotes->sum("peso");
-
-    //     return $pesoLotes > $limitePesoVehiculo;
-    // }
+        return $pesoLotes > $limitePesoVehiculo;
+    }
 }
