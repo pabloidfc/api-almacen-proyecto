@@ -16,4 +16,8 @@ class Vehiculo extends Model
     public function Transportista() {
         return $this -> hasMany(Transportista::class);
     }
+
+    public function VehiculoTransporta() {
+        return $this -> hasMany(VehiculoTransporta::class, "vehiculo_id");
+    }
 }

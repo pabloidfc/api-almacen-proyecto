@@ -56,7 +56,7 @@ class User extends Authenticatable
     }
 
     public function Transportista() {
-        return $this -> hasOne(Transportista::class);
+        return $this -> hasOne(Transportista::class, "user_id");
     }
 
     public function Funcionario() {

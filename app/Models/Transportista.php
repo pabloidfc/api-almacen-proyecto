@@ -14,7 +14,7 @@ class Transportista extends Model
     protected $table = "transportista";
 
     public function Usuario() {
-        return $this -> belongsTo(User::class);
+        return $this -> belongsTo(User::class, "user_id");
     }
 
     public function Vehiculo() {

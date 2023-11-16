@@ -30,11 +30,16 @@ class LoteController extends Controller
         $lote->peso = $productos->sum("peso");
         $lote->save();
         $lote->Productos()->saveMany($productos);
+        $lote->Productos()->saveMany($productos);
+        $lote->Productos()->update(["estado" => "Loteado"]);
+
+        $lote->Productos;
         return $lote;
     }
 
     public function Listar() {
-        return Lote::all();
+        $lotes = Lote::paginate(12);
+        return $lotes;
     }
 
     public function ListarUno($idLote) {
@@ -46,14 +51,13 @@ class LoteController extends Controller
     }
 
     public function ListarPorEstado(Request $req) {
-        $estadoLote = $req->input("estado");
         $validacion = Validator::make($req->all(), [
             "estado" => "required|in:Creado,En viaje,Desarmado"
         ]);
-
+        
         if($validacion->fails()) return response($validacion->errors(), 400);
-
-        $lote = Lote::where("estado", "=", $estadoLote)->get();
+        $estadoLote = $req->input("estado");
+        $lote = Lote::where("estado", "=", $estadoLote)->paginate(12);
         return $lote;
     }
 
@@ -100,12 +104,6 @@ class LoteController extends Controller
         $lote = Lote::find($idLote);
         if(!$lote) return response(["msg" => "Not found!"], 404);
 
-        $productos = $lote->Productos;
-        foreach ($productos as $producto) {
-            $producto->lote_id = null;
-            $producto->save();
-        }
-            
         $lote->estado = "Desarmado";
         $lote->save();
         return response(["msg" => "Desarmado!"], 200);

@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\LoteController;
 use App\Http\Controllers\AlmacenController;
+use App\Http\Controllers\RutaController;
+use App\Http\Controllers\VehiculoController;
+use App\Http\Controllers\TransportistaController;
+use App\Http\Controllers\UsuarioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,18 +22,11 @@ use App\Http\Controllers\AlmacenController;
 |
 */
 
-Route::get("/login", function () {
-    return response()->json(["msg" => "Sin permisos"]);
-}) -> name("login");
-
-Route::middleware("auth:sanctum") -> get("/user", function (Request $request) {
-    return $request -> user();
-});
-
 Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:Propio"]], function () {
     Route::controller(ProductoController::class) -> group(function () {
         Route::post("/producto", "Crear");
         Route::get("/producto", "Listar");
+        Route::get("/producto/lootear", "ListarLootear");
         Route::get("/producto/estado", "ListarPorEstado");
         Route::get("/producto/{id}", "ListarUno");
         Route::put("/producto/{id}", "Modificar");
@@ -56,10 +53,41 @@ Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:Propio"]], f
         Route::get("/almacen/{id}", "ListarUno");
         Route::get("/almacen/{id}/productos", "ListarAlmacenProductos");
     });
+
+    Route::controller(VehiculoController::class) -> group(function () {
+        Route::get("/vehiculo", "Listar");
+        Route::get("/vehiculo/estado", "ListarPorEstado");
+        Route::post("/vehiculo/crearViaje", "CrearViaje");
+        Route::post("/vehiculo/transportistas/asignar", "AsignarTransportistas");
+        Route::post("/vehiculo/transportistas/desasignar", "DesasignarTransportistas");
+        Route::get("/vehiculo/{id}", "ListarUno");
+    });
+
+    Route::controller(TransportistaController::class) -> group(function () {
+        Route::get("/transportista", "Listar");
+        Route::get("/transportista/{id}", "ListarUno");
+    });
+
+    Route::controller(RutaController::class) -> group(function () {
+        Route::get("/ruta", "Listar");
+        Route::get("/ruta/{id}", "ListarUno");
+    });
+
+    Route::controller(UsuarioController::class) -> group(function () {
+        Route::get("/usuario", "Listar");
+        Route::get("/usuario/token", "ListarUsuario");
+        Route::get("/usuario/{id}", "ListarUno");
+    });
 });
 
 Route::group(["middleware" => ["validarApiToken", "funcionario.tipo:De terceros"]], function () {
     Route::controller(ProductoController::class) -> group(function () {
-        Route::post("/producto", "Crear");
+        Route::post("tercerizado/producto", "Crear");
+    });
+    Route::controller(UsuarioController::class) -> group(function () {
+        Route::get("tercerizado/usuario", "ListarUsuario");
+    });
+    Route::controller(AlmacenController::class) -> group(function () {
+        Route::get("tercerizado/almacen", "ListarPorTipo");
     });
 });
