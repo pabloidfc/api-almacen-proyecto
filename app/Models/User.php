@@ -46,4 +46,20 @@ class User extends Authenticatable
     public function Lotes() {
         return $this -> hasMany(Lote::class);
     }
+
+    public function Ubicacion() {
+        return $this -> hasOne(Ubicacion::class);
+    }
+
+    public function Telefono() {
+        return $this -> hasMany(Telefono::class);
+    }
+
+    public function Transportista() {
+        return $this -> hasOne(Transportista::class, "user_id");
+    }
+
+    public function Funcionario() {
+        return $this -> hasOne(Funcionario::class);
+    }
 }

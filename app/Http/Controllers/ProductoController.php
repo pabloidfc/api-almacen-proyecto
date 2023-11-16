@@ -4,125 +4,148 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Producto;
-use App\Models\Almacen;
-use App\Models\Lote;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class ProductoController extends Controller
 {
+    const DEPARTAMENTOS_URUGUAY = [
+        "Artigas",
+        "Canelones",
+        "Cerro Largo",
+        "Colonia",
+        "Durazno",
+        "Flores",
+        "Florida",
+        "Lavalleja",
+        "Maldonado",
+        "Montevideo",
+        "Paysandú",
+        "Río Negro",
+        "Rivera",
+        "Rocha",
+        "Salto",
+        "San José",
+        "Soriano",
+        "Tacuarembó",
+        "Treinta y Tres"
+    ];
+
     public function Crear(Request $req) {
         $validaciones = Validator::make($req->all(), [
-            "almacen_id"        => ["required", "integer", Rule::exists('almacen', 'id')],
-            "estado"            => "nullable|in:En espera, Almacenado, Loteado, Desloteado, En viaje, Entregado",
-            "peso"              => "required|numeric",
-            "departamento"      => "required|alpha|min:4",
+            "almacen_id"        => "required|integer|exists:almacen,id",
+            "peso"              => "required|numeric|min:1",
+            "departamento"      => "required|in:" . implode(',', self::DEPARTAMENTOS_URUGUAY),
             "direccion_entrega" => "required|string",
-            "fecha_entrega"     => "required|date"
-        ], [
-            "almacen_id.exists" => "The provided id do not match any Almacen"
+            "fecha_entrega"     => "required|date|fecha_mayor_actual|fecha_menor_actual_mas_dos_dias"
         ]);
 
         if($validaciones->fails()) 
             return response($validaciones->errors(), 400);
 
         $producto = new Producto;
-        $producto -> peso              = $req -> input("peso");
-        $producto -> estado            = $req -> input("estado");
-        $producto -> departamento      = $req -> input("departamento");
-        $producto -> fecha_entrega     = $req -> input("fecha_entrega");
-        $producto -> direccion_entrega = $req -> input("direccion_entrega");  
-
-        $producto -> Almacen() -> associate($req->almacen_id);
-
-        $producto -> save();
+        $producto->peso              = $req->input("peso");
+        $producto->departamento      = $req->input("departamento");
+        $producto->direccion_entrega = $req->input("direccion_entrega");  
+        $producto->fecha_entrega     = $req->input("fecha_entrega");
+        $producto->Almacen()->associate($req->input("almacen_id"));
+        $producto->save();
         return $producto;
     }
 
-    private function existeAlmacen($idAlmacen) {
-        $almacen = Almacen::find($idAlmacen);
-        return $almacen ? $almacen : false;
+    public function Listar() {
+        $productos = Producto::paginate(12);
+        return $productos;
+    }
+    
+    public function ListarLootear() {
+        $productos = Producto::whereIn("estado", ["En espera", "Almacenado"])
+        ->paginate(12);
+
+        return $productos;
     }
 
-    private function existeLote($idLote) {
-        $lote = Lote::find($idLote);
-        return $lote ? $lote : false;
-    }
-
-    public function Listar(Request $req) {
-        return Producto::all();
-    }
-
-    public function ListarUno(Request $req, $idProducto) {
-        return Producto::findOrFail($idProducto);
-    }
-
-    public function ListarPorEstado(Request $req, $estadoProducto) {
-        $opciones = [
-            "En espera"  => "En espera",
-            "Almacenado" => "Almacenado",
-            "Loteado"    => "Loteado",
-            "Desloteado" => "Desloteado", 
-            "En viaje"   => "En viaje", 
-            "Entregado"  => "Entregado"
-        ];
-
-        if (isset($opciones[$estadoProducto])) {
-            $producto = Producto::where("estado", "=", $estadoProducto) -> get();
-            return $producto;
-        }
-
-        return response(["msg" => "Productos no encontrados!"], 404);
-    }
-
-    public function ListarProductoLote(Request $req, $idProducto) {
-        $producto = Producto::findOrFail($idProducto);
-
-        $producto -> Lote;
+    public function ListarUno($idProducto) {
+        $producto = Producto::find($idProducto);
+        if (!$producto) return response(["msg" => "Not found!"], 404);
+        $producto->Almacen;
         return $producto;
     }
 
-    public function ListarProductoAlmacen(Request $req, $idProducto) {
-        $producto = Producto::findOrFail($idProducto);
+    public function ListarPorEstado(Request $req) {
+        $estadoProducto = $req->input("estado");
+        $validacion = Validator::make($req->all(), [
+            "estado" => "required|in:En espera,Almacenado,Loteado,En ruta,Desloteado,En viaje,Entregado"
+        ]);
+        if($validacion->fails()) return response($validacion->errors(), 400);
 
-        $producto -> Almacen;
+        $producto = Producto::where("estado", "=", $estadoProducto)->get();
+
+        return $producto;
+    }
+
+    public function ListarProductoLote($idProducto) {
+        $producto = Producto::find($idProducto);
+        if (!$producto) return response(["msg" => "Not found!"], 404);
+        $producto->Lote;
+        return $producto;
+    }
+
+    public function ListarProductoAlmacen($idProducto) {
+        $producto = Producto::find($idProducto);
+        if (!$producto) return response(["msg" => "Not found!"], 404);
+        $producto->Almacen;
         return $producto;
     }
 
     public function Modificar(Request $req, $idProducto) {
-        $producto = Producto::findOrFail($idProducto);
+        $producto = Producto::find($idProducto);
+        if (!$producto) return response(["msg" => "Not found!"], 404);
 
-        $validaciones = Validator::make($req->all(), [
-            "almacen_id"        => ["required", "integer", Rule::exists('almacen', 'id')],
-            "estado"            => "nullable|in:En espera, Almacenado, Loteado, Desloteado, En viaje, Entregado",
-            "peso"              => "required|numeric",
-            "departamento"      => "required|alpha|min:4",
-            "direccion_entrega" => "required|string",
-            "fecha_entrega"     => "required|date"
-        ], [
-            "almacen_id.exists" => "The provided id do not match any Almacen"
+        $validacion = Validator::make($req->all(), [
+            "almacen_id"        => "nullable|integer|exists:almacen,id",
+            "estado"            => "nullable|in:En espera,Almacenado,Loteado,En ruta,Desloteado,En viaje,Entregado",
+            "peso"              => "nullable|numeric|min:1",
+            "departamento"      => "nullable|in:" . implode(',', self::DEPARTAMENTOS_URUGUAY),
+            "direccion_entrega" => "nullable|string"
         ]);
 
-        if($validaciones->fails()) 
-            return response($validaciones->errors(), 400);
+        if($validacion->fails()) return response($validacion->errors(), 400); 
 
-        $producto -> peso              = $req -> input("peso");
-        $producto -> estado            = $req -> input("estado");
-        $producto -> departamento      = $req -> input("departamento");
-        $producto -> fecha_entrega     = $req -> input("fecha_entrega");
-        $producto -> direccion_entrega = $req -> input("direccion_entrega");  
-        
-        $producto -> Almacen() -> associate($req->almacen_id);
+        if ($req->input("peso"))              $this->modificarPeso($producto, $req->input("peso"));
+        if ($req->input("estado"))            $this->modificarEstado($producto, $req->input("estado"));
+        if ($req->input("almacen_id"))        $this->modificarAlmacen($producto, $req->input("almacen_id"));
+        if ($req->input("departamento"))      $this->modificarDepartamento($producto, $req->input("departamento"));
+        if ($req->input("direccion_entrega")) $this->modificarDireccion($producto, $req->input("direccion_entrega"));
+
         $producto -> save();
-
-
         return $producto;
     }
+
+    private function modificarPeso($producto, $peso) {
+        if ($producto->lote_id != NULL) return response(["msg" => "No se puede modificar el peso de un producto asociado a un lote"], 400);
+        $producto->peso = $peso;
+    }
+
+    private function modificarAlmacen($producto, $idAlmacen) {
+        $producto->Almacen()->associate($idAlmacen);
+    }
+
+    private function modificarEstado($producto, $estado) {
+        $producto->estado = $estado;
+    }
     
-    public function Eliminar(Request $req, $idProducto) {
-        $producto = Producto::findOrFail($idProducto);
+    private function modificarDepartamento($producto, $departamento) {
+        $producto->departamento = $departamento;
+    }
+
+    private function modificarDireccion($producto, $direccion) {
+        $producto->direccion_entrega = $direccion;
+    }
+    
+    public function Eliminar($idProducto) {
+        $producto = Producto::find($idProducto);
+        if (!$producto) return response(["msg" => "Not found!"], 404);
         $producto -> delete();
-            
-        return ["msg" => "El Producto ha sido eliminado correctamente!"];
+        return response(["msg" => "Eliminado!"], 200);
     }
 }
