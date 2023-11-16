@@ -104,7 +104,6 @@ class LoteController extends Controller
         $lote = Lote::find($idLote);
         if(!$lote) return response(["msg" => "Not found!"], 404);
 
-        $lote->Productos()->update(["lote_id" => null]);
         $lote->estado = "Desarmado";
         $lote->save();
         return response(["msg" => "Desarmado!"], 200);
